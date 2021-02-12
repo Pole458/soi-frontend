@@ -1,5 +1,16 @@
 /* Write here anything required to complete the laboratory */
 
+html{
+  height: 100%;
+}
+  
+body{
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+
 h1,h2,h3,h4,h5,label,input,button,select,option,p,textarea {
   color: #444;
 }
@@ -81,13 +92,6 @@ input[type=text]:focus {
   max-width: 90%;
 }
 
-.header {
-}
-
-.header h1 {
-  /*TODO*/
-}
-
 .header img.logo {
   margin-right: 1rem;
 }
@@ -118,6 +122,22 @@ input[type=text]:focus {
 .input-group input[type=text] {
   flex-grow: 10;
 }
+
+.login-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-group-element {
+  width: 300px;
+  height: 40px;
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
 
 /* Tasks */
 

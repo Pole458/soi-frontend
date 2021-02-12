@@ -1,5 +1,6 @@
 <!doctype html>
 <html class="no-js" lang="en">
+
 <head>
   <meta charset="utf-8">
   <title>SOI</title>
@@ -23,72 +24,34 @@
 
   <meta name="theme-color" content="#fafafa">
 </head>
+
 <body>
 
-<div class="content">
+  <!-- Login Page -->
+  <form id="login-form" class="login-group">
+    <input class="login-group-element" name="Username" type="text" value="" placeholder="Insert your username here...">
+    <input class="login-group-element" name="Password" type="password" value="" placeholder="****">
+    <button class="login-group-element" type="submit" name="login" value="login">
+      <!-- <i class="eos-icons">login</i> -->
+      <span>Log In</span>
+    </button>
+    <button class="login-group-element" type="submit" name="signin" value="signin">
+      <!-- <i class="eos-icons">login</i> -->
+      <span>Sign In</span>
+    </button>
+    <p id="login-error-message" style="visibility: hidden; color: maroon;">Error Message</p>
+  </form>
 
-  <!-- Header -->
-  <div class="header">
-    <h1 class="text-center"><img class="logo" src="icon.png" width="52" alt="UniPR Logo">Things to do</h1>
+  <!-- Main Page -->
+  <div hidden id="main-page">
+    <h1>Main Page</h1>
+    <h2 id="username">Username here</h2>
   </div>
 
-  <!-- Panels -->
-  <div class="panel">
-    <h3>Enter new things to do</h3>
-
-    <form name="new-task">
-      <div class="form-group">
-        <div class="input-group">
-          <input name="task" type="text" value="" placeholder="Type some task">
-          <button type="submit">
-            <i class="eos-icons">add</i>
-            <span>Add</span>
-          </button>
-        </div>
-      </div>
-    </form>
-
-  </div>
-
-  <div class="panel">
-
-    <h3><i class="eos-icons">list</i> Your pending tasks</h3>
-
-    <div class="panel-commands">
-      <a href="#" data-action="complete-selected" title="Mark tasks as complete">Complete selected</a>
-    </div>
-
-    <!-- Tasks -->
-    <div class="tasks"></div>
-
-  </div>
-</div>
-
-<script type="text/html" id="task-template">
-  <div class="task-left">
-    <input type="checkbox" id="" name="">
-    <label for="" class="task-item"></label>
-  </div>
-
-  <div class="task-right">
-    <button class="task-btn" name="edit" title="Edit this task"><i class="eos-icons">edit</i></button>
-    <button class="task-btn" name="complete" title="Complete this task"><i class="eos-icons">done</i></button>
-  </div>
-</script>
-
-<script type="text/html" id="task-edit-template">
-  <div class="form-group">
-    <div class="input-group">
-      <input type="text" placeholder="Please enter some description">
-      <button name="save" class="primary"><i class="eos-icons">save</i></button>
-      <button name="cancel" class="warn"><i class="eos-icons">cancel</i></button>
-    </div>
-  </div>
-</script>
-
-<script src="js/vendor/modernizr-3.11.2.min.js"></script>
-<script src="js/plugins.js"></script>
-<script src="js/main.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="js/vendor/modernizr-3.11.2.min.js"></script>
+  <script src="js/plugins.js"></script>
+  <script src="js/main.js"></script>
 
 </body>
 </html>
