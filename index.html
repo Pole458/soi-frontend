@@ -27,8 +27,15 @@
 
 <body>
 
+  <!-- Loading screen -->
+  <div id="loading-page" style="width: 100%; height: 100%; display: flex; flex-direction: column;">
+    <div style="flex: 1;"></div>
+    <img style="max-height: 64px;" src='img/loading.svg'/>
+    <div style="flex: 1;"></div>
+  </div>
+
   <!-- Login Page -->
-  <form id="login-form" class="login-group">
+  <form hidden id="login-form" class="login-group">
     <input class="login-group-element" name="Username" type="text" value="" placeholder="Insert your username here...">
     <input class="login-group-element" name="Password" type="password" value="" placeholder="****">
     <button class="login-group-element" type="submit" name="login" value="login">
@@ -43,14 +50,40 @@
   </form>
 
   <!-- Main Page -->
-  <div hidden id="main-page">
-    <h1>Main Page</h1>
-    <h2 id="username">Username here</h2>
+  <div hidden id="main-page" style="width: 100%;">
+
+    <div id="app-bar" class="app-bar">
+      <div id="path" class="app-bar-path">
+        <button id="path-home" class="button-path" style="justify-content: center;">Home</button>
+        <button id="path-project" class="button-path">
+          <i class='eos-icons'>keyboard_arrow_right</i>
+          Project
+        </button>
+        <button id="path-dataset" class="button-path">
+          <i class='eos-icons'>keyboard_arrow_right</i>
+          Dataset
+        </button>
+        <button id="path-record" class="button-path">
+          <i class='eos-icons'>keyboard_arrow_right</i>
+          Record
+        </button>
+      </div>
+      <div style="flex: 1;"></div>
+      <div id="user-info" class="app-bar-user-info">
+        <button id="username">
+          <i class='eos-icons'>account_circle</i>
+          Username
+        </button>
+        <button id="button-logout">Log Out</button>
+      </div>
+    </div>
   </div>
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="js/vendor/modernizr-3.11.2.min.js"></script>
   <script src="js/plugins.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/api.js"></script>
   <script src="js/main.js"></script>
 
 </body>
