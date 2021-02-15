@@ -196,6 +196,21 @@ input[type=text]:focus {
 }
 
 
+/* Project */
+.project {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  min-height: 64px;
+  margin: 8px;
+  border-radius: 8px;
+  border: 1px solid black;
+}
+
+.project:hover {
+  background-color: burlywood;
+}
+
 /* Tasks */
 
 .tasks {
