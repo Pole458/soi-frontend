@@ -1,3 +1,4 @@
+'use strict'
 
 /**
  * JSON object containing api helper methods.
