@@ -68,7 +68,7 @@ api.getProjects = () => {
 		method: "get",
 		url: "api/projects",
 		success: function (data, textStatus) {
-			const {projects} = data;
+			const projects = data;
 			ui.showProjects(projects);
 		},
 		error: function (jqXHR, textStatus, errorThrown) {
@@ -77,14 +77,41 @@ api.getProjects = () => {
 	});
 }
 
-api.getProject = (title) => {
+api.getProject = (id) => {
 	$.ajax({
-		method: "post",
-		url: "api/project",
-		data: { "title": title },
+		method: "get",
+		url: "api/project/"+id,
 		success: function (data, textStatus) {
-			const {project} = data;
+			const project = data;
 			ui.showProject(project);
+		},
+		error: function (jqXHR, textStatus, errorThrown) {
+			ui.showLoginPage();
+		}
+	});
+}
+
+api.getRecords = (id) => {
+	$.ajax({
+		method: "get",
+		url: "api/project/"+id+"/records",
+		success: function (data, textStatus) {
+			const records = data;
+			ui.showRecords(records);
+		},
+		error: function (jqXHR, textStatus, errorThrown) {
+			ui.showLoginPage();
+		}
+	});
+}
+
+api.getRecord = (id) => {
+	$.ajax({
+		method: "get",
+		url: "api/record/"+id,
+		success: function (data, textStatus) {
+			const record = data;
+			ui.showRecord(record);
 		},
 		error: function (jqXHR, textStatus, errorThrown) {
 			ui.showLoginPage();
