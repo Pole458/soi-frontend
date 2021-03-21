@@ -1,17 +1,6 @@
 'use strict';
 
 /**
- * Auth token required in order to login and use the API.
- * It's stored as a cookie and is a json object that contains
- * {username, time, hash}.
- * Can be requested/renewed from the server with the following api calls
- *  /login
- *  /signin
- *  /check-token
- */
-var token;
-
-/**
  * Returns a cookie from its name.
  * @param {string} name
  */
@@ -54,11 +43,21 @@ function init() {
   ui.init()
 
   // Retrieve auth token stored in cookie
-  token = getCookieJSON("token");
+  model.token = getCookieJSON("token");
 
-  if(token) {
+  if(model.token) {
+    
     // If a token is found, try to login with it
-    api.loginToken();
+
+    api.loginWithToken({
+      success: () => {
+        ui.logIn();
+      },
+      error: () => {
+        ui.showLoginPage();
+      }
+    });
+  
   } else {
     // If no token is found, show login page
     ui.showLoginPage();

@@ -1,109 +1,72 @@
-/* Write here anything required to complete the laboratory */
+/* General */
 
-html{
+html {
   height: 100%;
+  overflow-y: hidden;
 }
-  
-body{
+
+body {
   height: 100%;
   display: flex;
+  overflow-y: hidden;
 }
-
 
 h1,h2,h3,h4,h5,label,input,button,select,option,p,textarea {
   color: #444;
 }
 
-.text-center {
-  text-align: center;
+.eos-icons{
+  cursor: pointer;
 }
 
-/* button i.eos-icons ~ span {
-  line-height: 1.5rem;
-  margin-left: 0.5rem;
-  height: 24px;
-  display: inline-block;
-} */
+/* Modal */
 
-/* button {
-  line-height: 24px;
-  border-inline: none;
-  border-radius: 6px;
-  padding: 5px 10px;
-  background-color: #6577c9;
-  box-shadow: none;
-  border: 1px solid #6577c9;
-  color: white;
-} */
-
-/* button:hover, button:focus {
-  background-color: #f8c82a;
-  border-color: #f8c82a;
+.modal-box {
+  display: block;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  padding-top: 200px;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
 }
 
-button.warn {
-  background-color: #C82AF8;
-  border-color: #C82AF8;
+.modal-content {
+  background-color: #fefefe;
+  width: 80%;
+  margin: auto;
+  position: relative;
+  padding: 16px 32px;
+  border: 1px solid black;
 }
 
-button.warn:hover, button.warn:focus {
-  background-color: #2AF8C8;
-  border-color: #2AF8C8;
-} */
+.modal-buttons {
+  position: absolute;
+  bottom: 16px;
+  right: 32px;
+} 
 
-input[type=text] {
-  border-inline: none;
-  border: 1px solid #6577c9;
-  border-radius: 3px;
-  padding: 3px 5px;
+.fab {
+  position: absolute;
+  bottom: 32px;
+  right: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 64px;
+  width: 64px;
+  background-color: cadetblue;
+  border-radius: 50%;
+  border: 1px solid black;
 }
 
-input[type=text]:focus {
-  border-color: #f8c82a;
+.fab:hover {
+  background-color: royalblue;
 }
 
-.input-group input[type=text] ~ button {
-  margin-left: 0;
-  border-left: none;
-  border-bottom-left-radius: 0;
-  border-top-left-radius: 0;
-}
-
-.input-group input[type=text] ~ button ~ button {
-  margin-left: -3px;
-  border-left: none;
-  border-bottom-left-radius: 0;
-  border-top-left-radius: 0;
-}
-
-.input-group input[type=text] {
-  margin-right: -1px;
-  border-right: none;
-  border-bottom-right-radius: 0;
-  border-top-right-radius: 0;
-}
-
-/* Layout */
-
-.content {
-  margin: 1rem auto;
-  min-width: 80%;
-  max-width: 90%;
-}
-
-.header img.logo {
-  margin-right: 1rem;
-}
-
-.panel {
-  padding: 1rem;
-  border-radius: 6px;
-  border: 1px solid #ccdae3;
-  background-color: #edf0f2;
-  margin: 1rem auto 0;
-  width: 90%;
-}
-
+/* App Bar */
 .app-bar {
   background-color: powderblue;
   display: flex;
@@ -116,7 +79,6 @@ input[type=text]:focus {
   align-items: center;
   display: flex;
   flex-direction: row;
-  /* border: 2px solid red; */
   background-color: #6577c9;
   border-top-right-radius: 10px;
   border-bottom-right-radius: 10px;
@@ -124,16 +86,18 @@ input[type=text]:focus {
 
 .button-path {
   line-height: 32px;
-  width: 5rem;
   display: flex;
   align-items: center;
-  justify-content: space-between;
   box-shadow: none;
   border: none;
   background-color: transparent;
   color: white;
   outline: none;
+}
 
+.button-path span {
+  width: 5rem;
+  margin-left: 4px;
 }
 
 .button-path:hover {
@@ -141,7 +105,6 @@ input[type=text]:focus {
 }
 
 .app-bar-user-info {
-  /* min-width: 250px; */
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -163,7 +126,7 @@ input[type=text]:focus {
   color: #f8c82a;
 }
 
-/* Input fields */
+/* Login Page */
 
 .form-group {
   display: flex;
@@ -195,7 +158,6 @@ input[type=text]:focus {
   margin-bottom: 8px;
 }
 
-
 /* Project */
 .project {
   display: flex;
@@ -212,105 +174,18 @@ input[type=text]:focus {
   background-color: burlywood;
 }
 
-/* Tasks */
-
-.tasks {
-  padding-top: 1rem;
-}
-
-.tasks:first-child {
-  border-top: none;
-}
-
-.task {
-  padding: 0.5rem;
-  border-top: 1px solid #ccdae3;
-  border-radius: 1px;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.task:first-of-type {
-  border-top: none;
-}
-
-.task-left {
-  flex-grow: 10;
-  display: flex;
-  align-items: center;
-}
-
-.task-left label {
-  margin-left: 1rem;
-}
-
-/*.task-right {
-  margin-right: 1rem;
-}*/
-
-.task-edit {
-  width: 100%;
-}
-
-/* Toast */
-
-.toast {
-  width: 100%;
-  padding: 1rem;
-  position: absolute;
-  top: 0;
-  left: 0;
-  margin: 0;
-  box-sizing: border-box;
-}
-
-.toast.error {
-  background-color: #dc143ce0;
-  color: #222222;
-}
-
-.modal-buttons{
-  position: absolute;
-  bottom: 14px;
-  right: 16px;
-} 
-
-.modal-box{
-  display: block;
-  position: fixed;
-  z-index: 1;
-  top: 0;
-  left: 0;
-  padding-top: 200px;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  background-color: rgb(0, 0, 0);
-  background-color: rgba(0, 0, 0, 0.4);
-}
-
-.modal-content{
-  background-color: #fefefe;
-  margin: auto;
-  padding: 70px;
-  border: 1px solid black;
-  width: 80%;
-}
-
-.tabs{
+.tabs {
   display: flex;
   flex-direction: column;
   border: 1px solid #ccc;
   float: left;
   background-color: #f1f1f1;
   width: 20%;
-  height: 100%;
+  overflow-y: hidden;
+  /* height: 100%; */
 }
 
-.tablink{
+.tablink {
   background-color: inherit;
   color: black;
   padding: 22px 16px;
@@ -328,22 +203,22 @@ input[type=text]:focus {
 }
 
 .tabcontent { 
-  float: left;
-  flex-direction: column;
-  padding: 0px 12px;
-  border: 1px solid #ccc;
   width: 80%;
+  /* flex: 1; */
+  /* height: 100%; */
+  flex-direction: column;
+  float: left;
+  overflow-y: auto;
   border-left: none;
-  height: 100%;
+  border: 1px solid #ccc;
 }
 
 .tags-list {
-  display: flex;
   flex-direction: row;
   align-items: center;
   min-height: 64px;
   margin: 8px;
-  padding-left: 10px;
+  padding: 8px;
   border-radius: 8px;
   border: 1px solid black;
 }
@@ -372,14 +247,12 @@ input[type=text]:focus {
   right: 12px;
 }
 
-.project-tags-val{
-  margin-left: 4px;
-  margin-right: 6px;
-  margin-bottom: 18px;
+.project-tags-val {
+  display: flex;
+  align-items: center;
   border-radius: 80px;
-  text-align: center;
-  padding-left: 10px;
-  padding-bottom: 6px;
+  margin-right: 8px;
+  padding: 4px 8px;
   border: 1px solid black;
   background-color: #ccc;
 }
@@ -388,11 +261,7 @@ input[type=text]:focus {
   background-color: rgb(124, 124, 124);
 }
 
-.eos-icons{
-  cursor: pointer;
-}
-
-.records-tags-val{
+.records-tags-val {
   margin: 8px;
   border-radius: 80px;
   padding: 4px;
@@ -401,8 +270,6 @@ input[type=text]:focus {
 }
 
 .tag-record {
-  /* display: inline-block; */
-  /*flex-direction: row; */
   position: relative;
   align-items: center;
   min-height: 38px;
@@ -413,8 +280,6 @@ input[type=text]:focus {
   border: 1px solid black; 
   width: 42%;
 }
-
-
 
 .remove-tags-records{
   position:absolute;

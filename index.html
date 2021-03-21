@@ -28,7 +28,7 @@
 <body>
 
   <!-- Loading screen -->
-  <div id="loading-page" style="width: 100%; height: 100%; display: flex; flex-direction: column;">
+  <div id="loading-page" style="width: 100%; flex: 1; display: flex; flex-direction: column;">
     <div style="flex: 1;"></div>
     <img style="max-height: 64px;" src='img/loading.svg'/>
     <div style="flex: 1;"></div>
@@ -50,25 +50,30 @@
   </form>
 
   <!-- Main Page -->
-  <div hidden id="main-page" style="width: 100%;" style="height: 100%">
+  <div hidden id="main-page" style="width: 100%; flex: 1; display: flex; flex-direction: column; overflow: hidden;">
 
+    <!-- Top Bar -->
     <div id="app-bar" class="app-bar">
+      
+      <!-- Path Buttons -->
       <div id="path" class="app-bar-path">
-        <button id="path-home" class="button-path" style="justify-content: center;">Home</button>
+        <button id="path-home" class="button-path" style="justify-content: center;">
+          <span>Home</span>
+        </button>
         <button hidden id="path-project" class="button-path">
           <i class='eos-icons'>keyboard_arrow_right</i>
           <span>Project</span>
-        </button>
-        <button hidden id="path-dataset" class="button-path">
-          <i class='eos-icons'>keyboard_arrow_right</i>
-          <span>Dataset</span>
         </button>
         <button hidden id="path-record" class="button-path">
           <i class='eos-icons'>keyboard_arrow_right</i>
           <span>Record</span>
         </button>
       </div>
+      
+      <!-- Space -->
       <div style="flex: 1;"></div>
+      
+      <!-- User/Log out Buttons -->
       <div id="user-info" class="app-bar-user-info">
         <button id="username">
           <i class='eos-icons'>account_circle</i>
@@ -78,19 +83,17 @@
       </div>
     </div>
       
-    <div id="main-page-content" style="height: 100%">
+    <div id="main-page-content" style="flex: 1; display: flex; flex-direction: column; overflow: hidden;">
     </div>
 
   </div>
-
   
-  
-
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="js/vendor/modernizr-3.11.2.min.js"></script>
   <script src="js/plugins.js"></script>
-  <script src="js/ui.js"></script>
   <script src="js/api.js"></script>
+  <script src="js/model.js"></script>
+  <script src="js/ui.js"></script>
   <script src="js/main.js"></script>
 
 </body>
