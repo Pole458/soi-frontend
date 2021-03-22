@@ -12,16 +12,16 @@ const api = {}
  * @param {string} username new username not yet registered
  * @param {string} password
  */
-api.signIn = ({username, password, success, error}) => {
+api.signIn = ({ username, password, onSuccess, onError }) => {
 	$.ajax({
 		method: 'post',
 		url: 'api/signin',
 		data: { 'username': username, 'password': password },
 		success: function (data, textStatus) {
-			success();
+			onSuccess();
 		},
 		error: function (jqXHR, textStatus, errorThrown) {
-			error(jqXHR.responseJSON.error);
+			onError(jqXHR.responseJSON.error);
 		}
 	});
 }
@@ -32,16 +32,16 @@ api.signIn = ({username, password, success, error}) => {
  * @param {string} username registered username
  * @param {string} password
  */
-api.logIn = ({username, password, success, error}) => {
+api.logIn = ({ username, password, onSuccess, onError }) => {
 	$.ajax({
 		method: 'post',
 		url: 'api/login',
 		data: { 'username': username, 'password': password },
 		success: function (data, textStatus) {
-			success();
+			onSuccess();
 		},
 		error: function (jqXHR, textStatus, errorThrown) {
-			error(jqXHR.responseJSON.error);
+			onError(jqXHR.responseJSON.error);
 		}
 	});
 }
@@ -50,85 +50,86 @@ api.logIn = ({username, password, success, error}) => {
  * API call that can be used to login given a valid token.
  * It also renews the token. 
  */
-api.loginWithToken = ({success, error}) => {
+api.loginWithToken = ({ onSuccess, onError }) => {
 	$.ajax({
 		method: 'post',
 		url: 'api/login-token',
 		success: function (data, textStatus) {
-			success();
+			onSuccess();
 		},
 		error: function (jqXHR, textStatus, errorThrown) {
-			error();
+			onError();
 		}
 	});
 }
 
-api.getProjects = ({success, error}) => {
+api.getProjects = ({ onSuccess, onError }) => {
 	$.ajax({
 		method: "get",
 		url: "api/projects",
 		success: function (data, textStatus) {
 			const projects = data;
-			success(projects);
+			onSuccess(projects);
 		},
 		error: function (jqXHR, textStatus, errorThrown) {
-			error();
+			onError();
 		}
 	});
 }
 
-api.getProject = ({id, success, error}) => {
+api.getProject = ({ id, onSuccess, onError }) => {
 	$.ajax({
 		method: "get",
 		url: "api/project/" + id,
 		success: function (data, textStatus) {
 			const project = data;
-			success(project);
+			onSuccess(project);
 		},
 		error: function (jqXHR, textStatus, errorThrown) {
-			error();
+			onError();
 		}
 	});
 }
 
-api.getRecords = ({id, success, error}) => {
+api.getRecords = ({ id, onSuccess, onError }) => {
 	$.ajax({
 		method: "get",
 		url: "api/project/" + id + "/records",
 		success: function (data, textStatus) {
 			const records = data;
-			success(records);
+			onSuccess(records);
 		},
 		error: function (jqXHR, textStatus, errorThrown) {
-			error();
+			onError();
 		}
 	});
 }
 
-api.getRecord = ({id, success, error}) => {
+api.getRecord = ({ id, onSuccess, onError }) => {
 	$.ajax({
 		method: "get",
 		url: "api/record/" + id,
 		success: function (data, textStatus) {
 			const record = data;
-			success(record);
+			onSuccess(record);
 		},
 		error: function (jqXHR, textStatus, errorThrown) {
-			error();
+			onError();
 		}
 	});
 }
 
-api.addProject = ({project_name, success, error}) => {
+api.addProject = ({ title, onSuccess, onError }) => {
 	$.ajax({
 		method: "post",
 		url: "api/project",
+		data: { 'title': title },
 		success: function (data, textStatus) {
 			const project = data;
-			success(project);
+			onSuccess(project);
 		},
 		error: function (jqXHR, textStatus, errorThrown) {
-			error();
+			onError(jqXHR.responseJSON.error);
 		}
 	})
 }

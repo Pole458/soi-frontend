@@ -1,240 +1,555 @@
 'use strict'
 
+const create = (name) => {
+	return document.createElement(name);
+}
+
+const icon = (name) => {
+	return $(create("i")).attr("class", "eos-icons").text(name)
+}
+
 /**
  * JSON object containing UI helper methods.
  */
 const ui = {}
 
+ui.setContent = (view) => {
+	$("body").empty();
+	$("body").append(view);
+}
 
-const ModalView = ({confirm, cancel}) => {
-	
-	const view = document.createElement("div");
+const LoadingView = () => {
+	return $(create("div"))
+		.css("width", "100%")
+		.css("flex", "1")
+		.css("display", "flex")
+		.css("flex-direction", "column")
+		.append($(create("div")).css("flex", "1"))
+		.append(
+			$(create("img"))
+				.css("max-height", "64px")
+				.attr("src", "img/loading.svg")
+		)
+		.append($(create("div")).css("flex", "1"))
+}
 
-	view.confirm = confirm;
-	view.cancel = cancel;
+const Fab = ({ onClick }) => {
+	return $(create("div"))
+		.attr("class", "fab")
+		.append(icon("add"))
+		.click(onClick)
+}
+
+const ModalView = ({ content, onConfirm }) => {
+
+	const view = create("div")
+
+	const errorDialog = $(create("p"))
+		.css("color", "maroon")
+		.css("visibility", "hidden")
+		.css("text-align", "center")
+		.text("Error Message")
+
+	const confirmButton = $(create("button"))
+		.text("Confirm")
+		.attr("class", "modal-button")
+		.click(ev => {
+			ev.preventDefault()
+			view.hideErrorMessage()
+			onConfirm()
+		})
+
+	const cancelButton = $(create("button"))
+		.text("Cancel")
+		.attr("class", "modal-button")
+		.click(ev => {
+			ev.preventDefault()
+			$(view).remove();
+		})
+		.css("margin-left", "4px")
 
 	$(view)
 		.attr("class", "modal-box")
 		.append(
-			$("<div></div>")
-				.attr("id", "modal-content-id")
+			$(create("div"))
 				.attr("class", "modal-content")
+				.append(content)
+				.append(errorDialog)
 				.append(
-					$("<form></form>")
+					$(create("form"))
 						.attr("class", "modal-buttons")
-						.append(
-							$("<button></button>")
-								.text("Confirm")
-								.attr("class", "modal-button")
-								.click(ev => {
-									view.confirm();
-									$(view).remove();
-								})
-						)
-						.append(
-							$("<button></button>")
-								.text("Cancel")
-								.attr("class", "modal-button")
-								.click(ev => {
-									view.cancel();
-									$(view).remove();
-								})
-								.css("margin-left", "4px")
-						)
+						.append(confirmButton)
+						.append(cancelButton)
 				)
 		)
 		.click(ev => {
-			if (ev.target === view)
-				$(view).remove();
+			if (!view.disabled && ev.target === view)
+				view.hide()
 		})
 
-	$("#main-page-content").append(view);
+	view.show = () => {
+		$("body").append(view);
+	}
+
+	view.hideErrorMessage = () => {
+		$(errorDialog)
+			.css("visibility", "hidden")
+	}
+
+	view.showErrorMessage = (errorMessage) => {
+		$(errorDialog)
+			.css("visibility", "visible")
+			.text(errorMessage)
+	}
+
+	view.disabled = false
+
+	view.enable = () => {
+		view.disabled = false
+		$(confirmButton).attr("disabled", false)
+		$(cancelButton).attr("disabled", false)
+	}
+
+	view.disable = () => {
+		view.disabled = true
+		$(confirmButton).attr("disabled", true)
+		$(cancelButton).attr("disabled", true)
+	}
+
+	view.hide = () => {
+		$(view).remove();
+	}
+
+	view.show()
 
 	return view;
 }
 
-
-//#region Loading Page
-
-ui.hideLoadingPage = () => {
-	// Hide
-	$("#loading-page").attr("hidden", true);
-}
-
-//#endregion
-
-//#region LogIn Page
-
-ui.hideLogInPage = () => {
-	// Hide
-	$("#login-form").attr("hidden", true);
-}
-
 const LoginPage = () => {
-	
 
-{/* <form hidden id="login-form" class="login-group">
-    <input class="login-group-element" name="Username" type="text" value="" placeholder="Insert your username here...">
-    <input class="login-group-element" name="Password" type="password" value="" placeholder="****">
-    <button class="login-group-element" type="submit" name="login" value="login">
-      <!-- <i class="eos-icons">login</i> -->
-      <span>Log In</span>
-    </button>// Hide other pages
-	ui.hideMainPage();
-	ui.hideLoadingPage();
-	ui.hideProjectPage();isibility: hidden; color: maroon;">Error Message</p>
-  </form> */}
+	const view = create("form");
 
-	// Hide other pages
-	ui.hideMainPage();
-	ui.hideLoadingPage();
-	ui.hideProjectPage();
+	const userNameInput = $(create("input"))
+		.attr("class", "login-group-element")
+		.attr("name", "Username")
+		.attr("type", "text")
+		.attr("value", "")
+		.attr("placeholder", "Insert your username here...")
 
-	// Show
-	$("#login-form").removeAttr("hidden");
-
-	ui.hideLogInError();
-
+	const passwordInput = $(create("input"))
+		.attr("class", "login-group-element")
+		.attr("name", "Password")
+		.attr("type", "password")
+		.attr("value", "")
+		.attr("placeholder", "****")
 
 	// Add click event to login/signin buttons
-	$("#login-form button").click(function (ev) {
+	const click = function (ev) {
 
 		ev.preventDefault();
-		ui.hideLogInError();
+
+		view.hideErrorMessage();
 
 		const value = $(this).attr("value");
 
-		const form = $('#login-form');
-		const username = $(form).children("input[name='Username']").val()
-		const password = $(form).children("input[name='Password']").val()
-		form.trigger("reset");
-
-		// console.log(username);
-		// console.log(password);
+		const username = $(userNameInput).val()
+		const password = $(passwordInput).val()
+		$(view).trigger("reset")
 
 		// Check user input
 		if (!username || !password) {
-			ui.showLogInError("Please insert valid username and password");
+			view.showErrorMessage("Please insert valid username and password")
 			return;
 		};
 
-		const successCallback = () => {
-			ui.logIn();
+		const onSuccess = () => {
+			token = getCookieJSON("token");
+			ui.setContent(MainPage())
 		}
 
-		const errorCallback = (errorCode) => {
-			ui.showLogInError(errorCode);
+		const onError = (errorMessage) => {
+			view.showErrorMessage(errorMessage)
+			view.enable()
 		}
+
+		view.disable();
 
 		if (value == 'login') {
 			api.logIn({
 				username: username,
 				password: password,
-				success: successCallback,
-				error: errorCallback
+				onSuccess: onSuccess,
+				onError: onError
 			});
 		} else if (value == 'signin') {
 			api.signIn({
 				username,
 				password,
-				success: successCallback,
-				error: errorCallback
+				onSuccess: onSuccess,
+				onError: onError
 			});
 		}
-	});
+	};
 
-	// Add click event to logout button
-	$("#button-logout").click(ev => {
-		ev.preventDefault();
-		model.token = null;
-		deleteCookie("token");
+	const logInButton = $(create("button"))
+		.attr("class", "login-group-element")
+		.attr("type", "submit")
+		.attr("name", "login")
+		.attr("value", "login")
+		.append(
+			$(create("span")).text("Log In")
+		)
+		.click(click)
 
-		ui.showLoginPage();
-	});
+	const signInButton = $(create("button"))
+		.attr("class", "login-group-element")
+		.attr("type", "submit")
+		.attr("name", "signin")
+		.attr("value", "signin")
+		.append(
+			$(create("span")).text("Sign In")
+		)
+		.click(click)
+
+
+	const logInErrorView = $(create("p"))
+		.css("visibility", "hidden")
+		.css("color", "maroon")
+		.text("Error Message")
+
+
+	$(view)
+		.attr("class", "login-group")
+		.append(userNameInput)
+		.append(passwordInput)
+		.append(logInButton)
+		.append(signInButton)
+		.append(logInErrorView)
+
+	view.disable = () => {
+		$(logInButton).attr("disabled", true)
+		$(signInButton).attr("disabled", true)
+	}
+
+	view.enable = () => {
+		$(logInButton).attr("disabled", false)
+		$(signInButton).attr("disabled", false)
+	}
+
+	view.showErrorMessage = (errorMessage) => {
+		$(logInErrorView).text(errorMessage);
+		$(logInErrorView).css("visibility", "visible")
+	}
+
+	view.hideErrorMessage = () => {
+		$(logInErrorView).css("visibility", "hidden");
+	}
+
+	return view;
 }
 
-ui.showLoginPage = () => {
-	// Hide other pages
-	ui.hideMainPage();
-	ui.hideLoadingPage();
-	ui.hideProjectPage();
+const MainPage = () => {
 
-	// Show
-	$("#login-form").removeAttr("hidden");
+	const view = create("div")
 
-	ui.hideLogInError();
-}
+	view.selectedProject = null
+	view.selectedRecord = null
 
-ui.showLogInError = (error) => {
-	$("#login-error-message").css("visibility", "visible");
-	$("#login-error-message").text(error);
-}
+	view.setContent = (c) => {
+		$(content).empty()
+		$(content).append(c)
+	}
 
-ui.hideLogInError = () => {
-	$("#login-error-message").css("visibility", "hidden");
-}
-
-//#endregion LogInPage
-
-//#region Main Page
-
-ui.hideMainPage = () => {
-	// Hide
-	$("#main-page").attr("hidden", true);
-}
-
-ui.showMainPage = () => {
-	// Hide other pages
-	ui.hideLoadingPage();
-	ui.hideLogInPage();
-	ui.hideProjectPage();
-
-	// Change Path
-	$("#path-project").attr("hidden", true);
-	$("#path-dataset").attr("hidden", true);
-	$("#path-record").attr("hidden", true);
-
-	$("#username").text(model.token.username);
-
-	$("#main-page-content").empty();
-
-	// Show
-	$("#main-page").removeAttr("hidden");
-
-	// API call to fill the page
-	api.getProjects({
-		success: (projects) => {
-			ui.showProjects(projects);
+	const topBar = TopBar({
+		onClickHome: function () {
+			view.selectedProject = null
+			view.selectedRecord = null
+			view.showProjects()
 		},
-		error: () => {
-			ui.showLoginPage();
+		onClickProject: () => {
+			view.selectedRecord = null
+			view.showProject(view.selectedProject.id)
 		}
 	});
-}
 
-ui.showProjects = (projects) => {
+	const content = $(create("div"))
+		.css("flex", "1")
+		.css("display", "flex")
+		.css("flex-direction", "column")
+		.css("overflow-y", "hidden")
 
-	if (projects) {
-		projects.forEach(project => {
+	$(view)
+		.css("width", "100%")
+		.css("flex", "1")
+		.css("display", "flex")
+		.css("flex-direction", "column")
+		.css("overflow-y", "hidden")
+		.append(
+			topBar
+		)
+		.append(
+			content
+		)
 
-			// Create an item for the project
-			const item = document.createElement("div");
+	view.showProjects = () => {
 
-			$(item)
-				.attr("class", "project")
-				.append($("<h3></h3>").text(project.title))
-				.click(ev => {
-					ui.showProject(project.id);
-				});
+		view.setContent(LoadingView())
 
-			$("#main-page-content").append(item);
+		api.getProjects({
+			onSuccess: (projects) => {
+
+				$(content).empty()
+
+				// Add Fab button
+				$(content).append(
+					Fab({
+						onClick: () => {
+							const titleinput = $(create("input"))
+								.attr("class", "new-project-input")
+								.attr("type", "text")
+								.attr("value", "")
+								.attr("placeholder", "Insert project name...")
+
+							const modal = ModalView({
+								content: $(create("div"))
+									.append(
+										titleinput
+									)
+									.append(
+										$(create("p"))
+											.text("Select type of project")
+									)
+									.append(
+										$(create("select"))
+											.append(
+												$(create("option"))
+													.attr("Value", "Text")
+													.text("Text")
+											)
+											.append(
+												$(create("option"))
+													.attr("Value", "Images")
+													.text("Images")
+											)
+									),
+								onConfirm: () => {
+									const title = $(titleinput).val()
+
+									if (!title) {
+										modal.showErrorMessage("Please insert valid title")
+										return;
+									}
+
+									modal.disable()
+
+									api.addProject({
+										title: title,
+										onSuccess: () => {
+											modal.hide()
+											view.showProjects()
+										},
+										onError: (errorMessage) => {
+											modal.showErrorMessage(errorMessage)
+											modal.enable()
+										}
+									})
+								}
+							})
+						}
+					})
+				)
+
+				if (!projects) return;
+
+				projects.forEach(project => {
+					$(content).append(
+						ProjectListView({
+							project: project,
+							onClick: (project_id) => {
+								view.showProject(project_id)
+							}
+						}))
+				})
+			},
+			onError: () => {
+
+			}
 		});
 	}
 
-	// Add Fab button
-	$("#main-page-content")
+	view.showProjects();
+
+	view.showProject = (project_id) => {
+		view.setContent(LoadingView())
+		api.getProject({
+			id: project_id,
+			onSuccess: (project) => {
+				view.selectedProject = project
+				topBar.hidePathRecord()
+				topBar.showPathProject(project.title)
+				view.setContent(
+					ProjectView({
+						project: project,
+						onRecordClick: (record) => {
+							view.showRecord(record)
+						}
+					})
+				)
+			},
+			onError: () => {
+
+			}
+		})
+	}
+
+	view.showRecord = (record) => {
+		view.selectedRecord = record
+		topBar.showPathRecord()
+		view.setContent(
+			RecordView({
+				record: record,
+				projectTags: view.selectedProject.tags
+			})
+		)
+	}
+
+	return view;
+}
+
+const TopBar = ({ onClickHome, onClickProject }) => {
+
+	const view = create("div")
+
+	const projectPathView = $(create("button"))
+		.attr("class", "button-path")
+		.attr("hidden", true)
 		.append(
-			$("<div></div>")
+			icon("keyboard_arrow_right")
+		)
+		.append(
+			$(create("span")).text("Project")
+		)
+		.click(ev => {
+			ev.preventDefault();
+			onClickProject();
+		})
+
+	const recordPathView = $(create("button"))
+		.attr("class", "button-path")
+		.attr("hidden", true)
+		.append(
+			icon("keyboard_arrow_right")
+		)
+		.append(
+			$(create("span")).text("Record")
+		)
+
+	view.showPathProject = (project_title) => {
+		$(projectPathView).children("span").text(project_title)
+		$(projectPathView).attr("hidden", false)
+	}
+
+	view.hidePathProject = () => {
+		$(projectPathView).attr("hidden", true)
+	}
+
+	view.showPathRecord = () => {
+		$(recordPathView).attr("hidden", false)
+	}
+
+	view.hidePathRecord = () => {
+		$(recordPathView).attr("hidden", true)
+	}
+
+	$(view)
+		.attr("class", "app-bar")
+		.append(
+			// Path buttons
+			$(create("div"))
+				.attr("class", "app-bar-path")
+				.append(
+					$(create("button"))
+						.attr("class", "button-path")
+						.css("justify-content", "center")
+						.append(
+							$(create("span")).text("Home")
+						)
+						.click(ev => {
+							ev.preventDefault();
+							view.hidePathRecord()
+							view.hidePathProject()
+							onClickHome();
+						})
+				)
+				.append(
+					projectPathView
+				)
+				.append(
+					recordPathView
+				)
+		)
+		.append(
+			// Space
+			$(create("div")).css("flex", "1")
+		)
+		.append(
+			// User/Log out Buttons
+			$(create("div"))
+				.attr("class", "app-bar-user-info")
+				.append(
+					$(create("button"))
+						.append(
+							icon("account_circle")
+						)
+						.text(token.username)
+				)
+				.append(
+					$(create("button"))
+						.text("Log Out")
+						.click(ev => {
+							ev.preventDefault();
+							token = null;
+							deleteCookie("token");
+							ui.setContent(LoginPage())
+						})
+				)
+		)
+
+	return view;
+}
+
+const ProjectListView = ({ project, onClick }) => {
+
+	const view = create("div")
+
+	view.project = project
+
+	$(view)
+		.attr("class", "project")
+		.append($(create("h3")).text(project.title))
+		.click(ev => {
+			onClick(project.id);
+		});
+
+	return view;
+}
+
+const ProjectView = ({ project, onRecordClick }) => {
+
+	const view = $(create("div"))
+		.css("display", "flex")
+		.css("flex-direction", "column")
+		.css("flex", "1")
+		.css("overflow-y", "hidden")
+
+	const content = $(create("div"))
+		.attr("class", "tabcontent")
+		.css("display", "flex")
+		.css("flex-direction", "column")
+		.css("flex", "1")
+		.css("overflow-y", "hidden")
+		.append(
+			$(create("div"))
 				.attr("class", "fab")
 				.append(
 					$("<i></i>")
@@ -242,349 +557,228 @@ ui.showProjects = (projects) => {
 						.text("add")
 				)
 				.click(ev => {
-					const modal = ModalView({
-						confirm: () => {
-							$(this).children("")
-						},
-						cancel: () => {}
-					})
-
-					ui.openModalBox({
-						confirm: () => {
-							api.addProject({
-								project_name: "",
-								success: (project) => {
-									
-								},
-								error: () => {
-
-								}
-							})
-						},
-						cancel: () => {
+					ModalView({
+						content: $(create("div"))
+							.append(
+								$(create("h4"))
+									.text("Add new tag: ")
+							)
+							.append(
+								$("<input></input>")
+									.attr("class", "new-tag-input")
+									.attr("type", "text")
+									.attr("name", "new-tag-name")
+									.attr("value", "")
+									.attr("placeholder", "Insert tag name")
+							),
+						onConfirm: () => {
 
 						}
-					});
-					$("#modal-content-id")
-						.append(
-							$("<input></input>")
-								.attr("class", "new-project-input")
-								.attr("type", "text")
-								.attr("name", "new-project-name")
-								.attr("value", "")
-								.attr("placeholder", "Insert project name")
-						)
-						.append(
-							$("<p></p>")
-								.text("Select type of project")
-						)
-						.append(
-							$("<select></select>")
-								.attr("id", "project-type")
-								.append(
-									$("<option></option>")
-										.attr("Value", "Text")
-										.text("Text")
-								)
-								.append(
-									$("<option></option>")
-										.attr("Value", "Images")
-										.text("Images")
-								)
-
-						)
+					})
 				})
 		)
-}
 
-// ui.openModalBox = ({confirm, cancel}) => {
-// 	const modal = document.createElement("div");
-// 	$(modal)
-// 		.attr("class", "modal-box")
-// 		.append(
-// 			$("<div></div>")
-// 				.attr("id", "modal-content-id")
-// 				.attr("class", "modal-content")
-// 				.append(
-// 					$("<form></form>")
-// 						.attr("class", "modal-buttons")
-// 						.append(
-// 							$("<button></button>")
-// 								.text("Confirm")
-// 								.attr("class", "modal-button")
-// 								.click(ev => {
-// 									$(modal).remove();
-// 									confirm();
-// 								})
-// 						)
-// 						.append(
-// 							$("<button></button>")
-// 								.text("Cancel")
-// 								.attr("class", "modal-button")
-// 								.click(ev => {
-// 									$(modal).remove();
-// 									cancel();
-// 								})
-// 								.css("margin-left", "4px")
-// 						)
-// 				)
-// 		)
-// 		.click(ev => {
-// 			if (ev.target === modal)
-// 				$(modal).remove();
-// 		})
+	view.setContent = (v) => {
+		$(content).empty()
+		$(content).append(v)
+	}
 
-// 	$("#main-page-content").append(modal);
-// }
+	const tagsTabButton = $(create("button"))
+		.text("Tags")
+		.attr("class", "tablink")
+		.css("background-color", "#ccc")
+		.click(ev => {
+			$(tagsTabButton).css("background-color", "#ccc")
+			$(recordsTabButton).css("background-color", "#f1f1f1")
+			view.showTags()
+		})
 
-ui.showProject = (project_id) => {
+	const recordsTabButton = $(create("button"))
+		.text("Records")
+		.attr("class", "tablink")
+		.click(ev => {
+			$(recordsTabButton).css("background-color", "#ccc")
+			$(tagsTabButton).css("background-color", "#f1f1f1")
+			view.showRecords();
+		})
 
-	api.getProject({
-		id: project_id,
-		success: (project) => {
-
-			// Change path
-			$("#path-project").children("span").text(project.title);
-			$("#path-project").removeAttr("hidden");
-			$("#path-dataset").attr("hidden", true);
-			$("#path-record").attr("hidden", true);
-
-			// Change main page content
-			$("#main-page-content").empty();
-
-			const title = document.createElement("h2");
-			$(title).text(project.title);
-
-			$("#main-page-content").append(title);
-
-			const tabs1 = document.createElement("div");
-			$(tabs1)
+	$(view)
+		.append(
+			// Title
+			$(create("h2"))
+				.text(project.title)
+		)
+		.append(
+			// Tabs
+			$(create("div"))
 				.css("display", "flex")
 				.css("flex-direction", "row")
 				.css("flex", "1")
 				.css("overflow-y", "hidden")
 				.append(
-					$("<div></div>")
+					$(create("div"))
 						.attr("class", "tabs")
 						.append(
-							$("<button></button>")
-								.text("Tags")
-								.attr("id", "tags-tab-button")
-								.attr("class", "tablink")
-								.css("background-color", "#ccc")
-								.click(ev => {
-									ui.openTabs("Tags");
-								})
+							tagsTabButton
 						)
 						.append(
-							$("<button></button>")
-								.text("Records")
-								.attr("id", "records-tab-button")
-								.attr("class", "tablink")
-								.click(ev => {
-									ui.openTabs("Records");
-								})
+							recordsTabButton
 						)
 				)
+				.append(content)
+		)
+
+	view.showTags = () => {
+
+		$(content).empty()
+
+		if (!project.tags) return;
+
+		project.tags.forEach(tag => {
+
+			const tagView = create("div")
+
+			$(tagView)
+				.attr("class", "tags-list")
+				.css("flex-direction", "row")
+				.css("display", "block")
 				.append(
-					$("<div></div>")
-						.css("display", "block")
-						.attr("class", "tabcontent")
-						.attr("id", "tags-tabcontent")
+					$(create("div"))
+						.css("position", "relative")
+						.css("margin", "16px")
 						.append(
-							$("<div></div>")
-								.attr("class", "fab")
+							$(create("h3"))
+								.text(tag.name)
+								.css("display", "inline")
+						)
+						.append(
+							$(create("button"))
+								.attr("class", "remove-tags-project")
+								.css("display", "inline")
 								.append(
-									$("<i></i>")
-										.attr("class", "eos-icons")
-										.text("add")
+									icon("remove_circle")
 								)
-								.click(ev => {
-									ui.openModalBox();
-									$("#modal-content-id")
-										.append(
-											$("<h4></h4>")
-												.text("Add new tag: ")
-										)
-										.append(
-											$("<input></input>")
-												.attr("class", "new-tag-input")
-												.attr("type", "text")
-												.attr("name", "new-tag-name")
-												.attr("value", "")
-												.attr("placeholder", "Insert tag name")
-										)
-								})
 						)
 				)
-				.append(
-					$("<div></div>")
-						.css("display", "none")
-						.attr("class", "tabcontent")
-						.attr("id", "records-tabcontent")
+
+			const valuesList = create("div")
+			$(valuesList)
+				.css("display", "flex")
+
+			if (tag.values) {
+				tag.values.forEach(value => {
+					const valueView = create("div")
+
+					$(valueView)
+						.attr("class", "project-tags-val")
+						.text(value)
 						.append(
-							$("<div></div>")
-								.attr("class", "fab")
-								.append(
-									$("<i></i>")
-										.attr("class", "eos-icons")
-										.text("add")
-								)
+							$(icon("remove_circle"))
+								.css("margin-left", "10px")
 								.click(ev => {
-									ui.openModalBox();
-									$("#modal-content-id")
-										.append(
-											$("<h4></h4>")
-												.text("Add new record: ")
-										)
-										.append(
-											$("<input></input>")
-												.attr("class", "new-record-input")
-												.attr("type", "text")
-												.attr("name", "new-record-name")
-												.attr("value", "")
-												.attr("placeholder", "Insert record")
-										)
+									$(valueView).remove();
 								})
 						)
-				);
 
-			$("#main-page-content").append(tabs1);
+					$(valuesList).append(valueView);
+				})
+			}
 
-			ui.showTags(project.tags);
+			const addValueView = create("div")
+			$(addValueView)
+				.attr("class", "project-tags-val")
+				.css("cursor", "pointer")
+				.text("+ Add new value")
+				.click(ev => {
 
-			ui.showRecords(project.id);
-		},
-		error: () => {
-			ui.showLoginPage();
-		}
-	});
-}
+					const input = $(create("input"))
+						.attr("type", "text")
+						.attr("name", "new-tag-value")
+						.attr("value", "")
+						.attr("placeholder", "Insert tag value")
 
-ui.showTags = (tags) => {
-
-	if (!tags) return;
-
-	tags.forEach(tag => {
-
-		const tagView = document.createElement("div")
-
-		$(tagView)
-			.attr("class", "tags-list")
-			.css("flex-direction", "row")
-			.css("display", "block")
-			.append(
-				$("<div></div>")
-					.css("position", "relative")
-					.css("margin", "16px")
-					.append(
-						$("<h3></h3>")
-							.text(tag.name)
-							.css("display", "inline")
-					)
-					.append(
-						$("<button></button>")
-							.attr("class", "remove-tags-project")
-							.css("display", "inline")
+					ModalView({
+						content: $(create("div"))
 							.append(
-								$("<i></i>")
-									.attr("class", "eos-icons")
-									.text("remove_circle")
+								$(create("h4"))
+									.text("Add tag value: ")
 							)
-					)
+							.append(input),
+						onConfirm: () => {
+							const tagName = $(input).val()
+
+							if (!tagName) {
+
+							}
+
+							api.add
+
+						}
+					})
+				})
+
+			$(valuesList).append(addValueView);
+
+			$(tagView).append(valuesList)
+
+			$(content).append(
+				Fab({
+					onClick: () => {
+						ModalView({
+						})
+					}
+				})
 			)
 
-		const valuesList = document.createElement("div")
-		$(valuesList)
-			.css("display", "flex")
+			$(content).append(tagView);
+		})
+	}
 
-		if (tag.values) {
-			tag.values.forEach(value => {
-				const valueView = document.createElement("div")
+	view.showRecords = () => {
+		view.setContent(LoadingView())
 
-				$(valueView)
-					.attr("class", "project-tags-val")
-					.text(value)
-					.append(
-						$("<i></i>")
-							.attr("class", "eos-icons")
-							.text("remove_circle")
-							.attr("id", "eos-remove-project-tag")
-							.css("margin-left", "10px")
-							.click(ev => {
-								$(valueView).remove();
+		api.getRecords({
+			id: project.id,
+			onSuccess: (records) => {
+
+				$(content).empty()
+
+				$(content).append(
+					Fab({
+						onClick: () => {
+							ModalView({
 							})
-					)
+						}
+					})
+				)
 
-				$(valuesList).append(valueView);
-			})
-		}
+				if (!records) return;
 
-		const addValueView = document.createElement("div")
-		$(addValueView)
-			.attr("class", "project-tags-val")
-			.attr("id", "add-tag-value-project")
-			.css("cursor", "pointer")
-			.text("+ Add new value")
-			.click(ev => {
-				ui.openModalBox();
-				$("#modal-content-id")
-					.append(
-						$("<h4></h4>")
-							.text("Add tag value: ")
-					)
-					.append(
-						$("<input></input>")
-							.attr("class", "new-tag-value-input")
-							.attr("type", "text")
-							.attr("name", "new-tag-value")
-							.attr("value", "")
-							.attr("placeholder", "Insert tag value")
-					)
-			})
-
-		$(valuesList).append(addValueView);
-
-		$(tagView).append(valuesList)
-
-		$("#tags-tabcontent").append(tagView);
-	})
-}
-
-ui.showRecords = (project_id) => {
-
-	api.getRecords({
-		id: project_id,
-		success: (records) => {
-			// Remove elements from records list before refresh it
-			$("#records-tabcontent").empty();
-
-			if (records) {
 				records.forEach(record => {
 
-					const recordView = document.createElement("div")
+					const recordView = create("div")
 
 					$(recordView)
 						.attr("class", "records-list")
 						.css("flex-direction", "row")
 						.css("display", "block")
 						.css("overflow-y", "hidden")
-						.click(ev => {
-							ui.showRecord(record.id);
-						})
 						.append(
-							$("<h3></h3>")
+							$(create("h3"))
 								.text(record.input)
 						)
+						.click(ev => {
+							onRecordClick(record)
+						})
 
-					const tagList = document.createElement("div")
+					const tagList = create("div")
 					$(tagList)
 						.css("display", "flex")
 
 					if (record.tags) {
 
 						record.tags.forEach(tag => {
-							const tagView = document.createElement("div")
+							const tagView = create("div")
 
 							$(tagView)
 								.attr("class", "records-tags-val")
@@ -596,246 +790,157 @@ ui.showRecords = (project_id) => {
 
 					$(recordView).append(tagList);
 
-					$("#records-tabcontent").append(recordView);
+					$(content).append(recordView);
 				})
+			},
+			onError: () => {
+				ui.showLoginPage();
 			}
-		},
-		error: () => {
-			ui.showLoginPage();
-		}
-	});
-}
-
-ui.openTabs = (text) => {
-
-	if (text == "Tags") {
-		$("#records-tabcontent")
-			.css("display", "none")
-		$("#records-tab-button")
-			.css("background-color", "#f1f1f1")
-		$("#tags-tabcontent")
-			.css("display", "block")
-		$("#tags-tab-button")
-			.css("background-color", "#ccc")
+		});
 	}
 
-	if (text == "Records") {
-		$("#tags-tabcontent")
-			.css("display", "none")
-		$("#tags-tab-button")
-			.css("background-color", "#f1f1f1")
-		$("#records-tabcontent")
-			.css("display", "block")
-		$("#records-tab-button")
-			.css("background-color", "#ccc")
-	}
+	view.showTags()
+
+	return view;
 }
 
-ui.showRecord = (record_id) => {
+const RecordView = ({ record, projectTags }) => {
 
-	api.getRecord({
-		id: record_id,
-		success: (record) => {
+	const view = create("div")
 
-			$("#path-record").children("span").text(record.title);
-			$("#path-record").removeAttr("hidden");
-			$("#path-dataset").attr("hidden", true);
-
-			$("#path-project").click(ev => {
-				ev.preventDefault();
-				ui.showProject(record.project_id);
-			})
-
-			// Change main page content
-			$("#main-page-content").empty();
-
-			const input = document.createElement("div");
-			$(input)
-				.css("flex-direction", "row")
+	const input = create("div");
+	$(input)
+		.css("flex-direction", "row")
+		.append(
+			$(create("h1"))
+				.text(record.input)
+				.css("padding-left", "20px")
+		)
+		.append(
+			$(create("button"))
+				.css("margin-left", "8px")
 				.append(
-					$("<h1></h1>")
-						.text(record.input)
-						.css("padding-left", "20px")
+					$(create("i"))
+						.attr("class", "eos-icons")
+						.text("mode_edit")
 				)
-				.append(
-					$("<button></button>")
-						.css("margin-left", "8px")
-						.append(
-							$("<i></i>")
-								.attr("class", "eos-icons")
-								.text("mode_edit")
-						)
-						.click(ev => {
-							ui.openModalBox();
-							$("#modal-content-id")
-								.append(
-									$("<h4></h4>")
-										.text("Modify input:")
-								)
-								.append(
-									$("<input></input>")
-										.attr("class", "input-modifier")
-										.attr("type", "text")
-										.attr("name", "record-input-mod")
-										.attr("value", record.input)
-								)
-						})
-				)
-
-			$("#main-page-content").append(input);
-
-			$("#main-page-content").append(
-				$("<div></div>")
-					.attr("id", "record-content-div")
-					.css("flex-direction", "column")
-			)
-
-			if (record.tags) {
-
-				record.tags.forEach(tag => {
-					const item1 = document.createElement("div")
-
-					$(item1)
-						.attr("class", "tag-record")
-						.text(tag.name + ": ")
-						.append(
-							$("<select></select>")
-								.attr("id", "record-tag-values")
-								.append(
-									$("<option></option>")
-										.attr("Value", "Value")
-										.text(tag.value)
-								)
-								.css("margin-left", "16px")
-						)
-						.append(
-							$("<button></button>")
-								.attr("class", "remove-tags-records")
-								.append(
-									$("<i></i>")
-										.attr("class", "eos-icons")
-										.text("remove_circle")
-								)
-						)
-
-					$("#record-content-div").append(item1);
+				.click(ev => {
+					ModalView({
+						content: $(create("div"))
+							.append(
+								$(create("h4"))
+									.text("Modify input:")
+							)
+							.append(
+								$(create("input"))
+									.attr("class", "input-modifier")
+									.attr("type", "text")
+									.attr("name", "record-input-mod")
+									.attr("value", record.input)
+							),
+						onConfirm: () => { }
+					})
 				})
+		)
+
+	$(view).append(input)
+
+	const tagsList = $(create("div"))
+		.css("flex-direction", "column")
+
+	if (record.tags) {
+
+		record.tags.forEach(tag => {
+
+			const tagView = create("div")
+
+			const select = $(create("select"))
+				.css("margin-left", "16px")
+
+			for (const projectTag of projectTags) {
+				if (projectTag.name == tag.name) {
+					for (const value of projectTag.values) {
+						const option = $(create("option"))
+							.attr("value", value)
+							.text(value)
+
+						if (value === tag.value)
+							$(option).attr("selected", "selected")
+
+						$(select).append(option)
+					}
+					break;
+				}
 			}
 
-			$("#record-content-div")
+			$(tagView)
+				.attr("class", "tag-record")
+				.text(tag.name + ": ")
+				.append(select)
 				.append(
-					$("<div></div>")
-						.attr("class", "add-tag-record")
-						.append($("<h3></h3>").text("+ Add new tag"))
-						.click(ev => {
-							ui.openModalBox();
-							$("#modal-content-id")
-								.append(
-									$("<h4></h4>")
-										.text("Insert tag name and value:")
-								)
-								.append(
-									$("<input></input>")
-										.attr("class", "new-recordtag-input")
-										.attr("type", "text")
-										.attr("name", "new-recordtag-name")
-										.attr("value", "")
-										.attr("placeholder", "Insert tag name")
-								)
-								.append(
-									$("<input></input>")
-										.attr("class", "new-recordtag-input")
-										.attr("type", "text")
-										.attr("name", "new-recordtag-value")
-										.attr("value", "")
-										.attr("placeholder", "Insert tag value")
-										.css("margin-left", "10px")
-								)
-						})
+					$(create("button"))
+						.attr("class", "remove-tags-records")
+						.append(icon("remove_circle"))
 				)
 
-		},
-		error: () => {
-			ui.showMainPage();
-		}
-	});
+			$(tagsList).append(tagView);
+		})
+	}
+
+	$(tagsList)
+		.append(
+			$(create("div"))
+				.attr("class", "add-tag-record")
+				.append($(create("h3")).text("+ Add new tag"))
+				.click(ev => {
+
+					const tagNameselect = $(create("select"))
+
+					for (const projectTag of projectTags) {
+						$(tagNameselect).append(
+							$(create("option"))
+								.attr("value", projectTag.name)
+								.text(projectTag.name)
+						)
+					}
+
+					const tagValueSelect = $(create("select"))
+
+					$(tagNameselect).change(() => {
+
+						$(tagValueSelect).empty()
+
+						const tagName = $(tagNameselect).val()
+
+						for (const projectTag of projectTags) {
+							if (projectTag.name == tagName) {
+								for (const value of projectTag.values) {
+									$(tagValueSelect).append(
+										$(create("option"))
+											.attr("value", value)
+											.text(value)
+									)
+								}
+								break;
+							}
+						}
+					})
+
+					ModalView({
+						content: $(create("div"))
+							.append(
+								$(create("h4"))
+									.text("Insert tag name and value:")
+							)
+							.append(tagNameselect)
+							.append(tagValueSelect)
+						,
+						onConfirm: () => { }
+					})
+				})
+		)
+
+	$(view).append(tagsList)
+
+	return view
 }
-
-ui.hideProjectPage = () => {
-	// Hide
-	$("#project-form").attr("hidden", true);
-}
-
-ui.logIn = () => {
-	// Update token value stored in cookie
-	model.token = getCookieJSON("token");
-	ui.showMainPage();
-}
-
-ui.init = () => {
-
-	// Add click event to login/signin buttons
-	$("#login-form button").click(function (ev) {
-
-		ev.preventDefault();
-		ui.hideLogInError();
-
-		const value = $(this).attr("value");
-
-		const form = $('#login-form');
-		const username = $(form).children("input[name='Username']").val()
-		const password = $(form).children("input[name='Password']").val()
-		form.trigger("reset");
-
-		// console.log(username);
-		// console.log(password);
-
-		// Check user input
-		if (!username || !password) {
-			ui.showLogInError("Please insert valid username and password");
-			return;
-		};
-
-		const successCallback = () => {
-			ui.logIn();
-		}
-
-		const errorCallback = (errorCode) => {
-			ui.showLogInError(errorCode);
-		}
-
-		if (value == 'login') {
-			api.logIn({
-				username: username,
-				password: password,
-				success: successCallback,
-				error: errorCallback
-			});
-		} else if (value == 'signin') {
-			api.signIn({
-				username,
-				password,
-				success: successCallback,
-				error: errorCallback
-			});
-		}
-	});
-
-	// Add click event to logout button
-	$("#button-logout").click(ev => {
-		ev.preventDefault();
-		model.token = null;
-		deleteCookie("token");
-
-		ui.showLoginPage();
-	});
-
-	// Add click event to home path button
-	$("#path-home").click(ev => {
-		ev.preventDefault();
-		ui.showMainPage();
-	})
-
-}
-
-//#endregion Main Page
