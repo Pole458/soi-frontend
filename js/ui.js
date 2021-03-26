@@ -273,6 +273,7 @@ const MainPage = () => {
 	});
 
 	const content = $(create("div"))
+		.attr("class", "main-content-div")
 		.css("flex", "1")
 		.css("display", "flex")
 		.css("flex-direction", "column")
@@ -309,27 +310,40 @@ const MainPage = () => {
 								.attr("type", "text")
 								.attr("value", "")
 								.attr("placeholder", "Insert project name...")
+								.css("color", " #ffffff")
+								.css("background-color", "#1b1b1b")
+								.css("border", "1px solid #ffffff")
+
 
 							const modal = ModalView({
 								content: $(create("div"))
+									.append(
+										$(create("p"))
+											.text("Insert new project name:")
+											.css("color", "#ffffff")
+									)
 									.append(
 										titleinput
 									)
 									.append(
 										$(create("p"))
 											.text("Select type of project")
+											.css("color", "#ffffff")
 									)
 									.append(
 										$(create("select"))
+											.attr("class", "type-project-selector")
 											.append(
 												$(create("option"))
 													.attr("Value", "Text")
 													.text("Text")
+													.css("color", "rgb(0, 0, 0.9)")
 											)
 											.append(
 												$(create("option"))
 													.attr("Value", "Images")
 													.text("Images")
+													.css("color", "rgb(0, 0, 0.9)")
 											)
 									),
 								onConfirm: () => {
@@ -586,10 +600,15 @@ const ProjectView = ({ project, onRecordClick }) => {
 	const tagsTabButton = $(create("button"))
 		.text("Tags")
 		.attr("class", "tablink")
-		.css("background-color", "#ccc")
+		.css("background-color", "#ffa31a")
+		.css("color", "rgb(0, 0, 0.9)")
 		.click(ev => {
-			$(tagsTabButton).css("background-color", "#ccc")
-			$(recordsTabButton).css("background-color", "#f1f1f1")
+			$(tagsTabButton)
+				.css("background-color", "#ffa31a")
+				.css("color", "rgb(0, 0, 0.9)")
+			$(recordsTabButton)
+				.css("background-color", "#1b1b1b")
+				.css("color", "#ffffff")
 			view.showTags()
 		})
 
@@ -597,8 +616,12 @@ const ProjectView = ({ project, onRecordClick }) => {
 		.text("Records")
 		.attr("class", "tablink")
 		.click(ev => {
-			$(recordsTabButton).css("background-color", "#ccc")
-			$(tagsTabButton).css("background-color", "#f1f1f1")
+			$(recordsTabButton)
+				.css("background-color", "#ffa31a")
+				.css("color", "rgb(0, 0, 0.9)")
+			$(tagsTabButton)
+				.css("background-color", "#1b1b1b")
+				.css("color", "#ffffff")
 			view.showRecords();
 		})
 
@@ -607,6 +630,8 @@ const ProjectView = ({ project, onRecordClick }) => {
 			// Title
 			$(create("h2"))
 				.text(project.title)
+				.css("color", "#f90")
+				.css("margin-left", "16px")
 		)
 		.append(
 			// Tabs
@@ -725,6 +750,7 @@ const ProjectView = ({ project, onRecordClick }) => {
 				Fab({
 					onClick: () => {
 						ModalView({
+
 						})
 					}
 				})
@@ -811,14 +837,17 @@ const RecordView = ({ record, projectTags }) => {
 	const input = create("div");
 	$(input)
 		.css("flex-direction", "row")
+		//.css("display", "flex")
 		.append(
 			$(create("h1"))
 				.text(record.input)
 				.css("padding-left", "20px")
+				.css("color", "#f90")
+				.css("display", "inline-block")
 		)
 		.append(
 			$(create("button"))
-				.css("margin-left", "8px")
+				.attr("class", "modify-input-button")
 				.append(
 					$(create("i"))
 						.attr("class", "eos-icons")
@@ -830,6 +859,7 @@ const RecordView = ({ record, projectTags }) => {
 							.append(
 								$(create("h4"))
 									.text("Modify input:")
+									.css("color", "#ffffff")
 							)
 							.append(
 								$(create("input"))
@@ -841,6 +871,17 @@ const RecordView = ({ record, projectTags }) => {
 						onConfirm: () => { }
 					})
 				})
+		)
+		.append(
+			$(create("button"))
+				.attr("class", "remove-record-button")
+				.text("Remove record")
+				.append(
+					$(create("i"))
+						.attr("class", "eos-icons")
+						.css("margin-left", "8px")
+						.text("remove_circle")
+				)
 		)
 
 	$(view).append(input)
@@ -855,13 +896,13 @@ const RecordView = ({ record, projectTags }) => {
 			const tagView = create("div")
 
 			const select = $(create("select"))
-				.css("margin-left", "16px")
-
+				.attr("class", "select-tag-value-record")
 			for (const projectTag of projectTags) {
 				if (projectTag.name == tag.name) {
 					for (const value of projectTag.values) {
 						const option = $(create("option"))
 							.attr("value", value)
+							.css("color", "rgb(0, 0, 0.9)")
 							.text(value)
 
 						if (value === tag.value)
@@ -887,60 +928,65 @@ const RecordView = ({ record, projectTags }) => {
 		})
 	}
 
-	$(tagsList)
-		.append(
-			$(create("div"))
-				.attr("class", "add-tag-record")
-				.append($(create("h3")).text("+ Add new tag"))
-				.click(ev => {
+	$(view).append(tagsList)
 
-					const tagNameselect = $(create("select"))
+	$(view).append(
+		Fab({
+			onClick: () => {
+
+				const tagNameselect = $(create("select"))
+
+				for (const projectTag of projectTags) {
+					$(tagNameselect)
+						.attr("class", "new-record-tag-selector")
+						.append(
+						$(create("option"))
+							.attr("value", projectTag.name)
+							.text(projectTag.name)
+							.css("color", "rgb(0, 0, 0.9)")
+					)
+				}
+
+				const tagValueSelect = $(create("select"))
+				
+				$(tagValueSelect).attr("class","new-record-tag-value-selector")
+
+				$(tagNameselect).change(() => {
+
+					$(tagValueSelect).empty()
+
+					const tagName = $(tagNameselect).val()
 
 					for (const projectTag of projectTags) {
-						$(tagNameselect).append(
-							$(create("option"))
-								.attr("value", projectTag.name)
-								.text(projectTag.name)
-						)
-					}
-
-					const tagValueSelect = $(create("select"))
-
-					$(tagNameselect).change(() => {
-
-						$(tagValueSelect).empty()
-
-						const tagName = $(tagNameselect).val()
-
-						for (const projectTag of projectTags) {
-							if (projectTag.name == tagName) {
-								for (const value of projectTag.values) {
-									$(tagValueSelect).append(
-										$(create("option"))
-											.attr("value", value)
-											.text(value)
-									)
-								}
-								break;
+						if (projectTag.name == tagName) {
+							for (const value of projectTag.values) {
+								$(tagValueSelect).append(
+									$(create("option"))
+										.attr("value", value)
+										.text(value)
+										.css("color", "rgb(0, 0, 0.9)")
+								)
 							}
+							break;
 						}
-					})
-
-					ModalView({
-						content: $(create("div"))
-							.append(
-								$(create("h4"))
-									.text("Insert tag name and value:")
-							)
-							.append(tagNameselect)
-							.append(tagValueSelect)
-						,
-						onConfirm: () => { }
-					})
+					}
 				})
-		)
 
-	$(view).append(tagsList)
+				ModalView({
+					content: $(create("div"))
+						.append(
+							$(create("h4"))
+								.text("Insert tag name and value:")
+								.css("color", "#ffffff")
+						)
+						.append(tagNameselect)
+						.append(tagValueSelect)
+					,
+					onConfirm: () => { }
+				})
+			}
+		})
+	)
 
 	return view
 }

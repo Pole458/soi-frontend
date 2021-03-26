@@ -13,6 +13,7 @@ body {
 
 h1,h2,h3,h4,h5,label,input,button,select,option,p,textarea {
   color: #444;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 .eos-icons{
@@ -30,16 +31,16 @@ h1,h2,h3,h4,h5,label,input,button,select,option,p,textarea {
   padding-top: 200px;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.4);
+  background-color: rgba(0, 0, 0, 0.9);
 }
 
 .modal-content {
-  background-color: #fefefe;
+  background-color: #1b1b1b;
   width: 80%;
   margin: auto;
   position: relative;
   padding: 16px 32px;
-  border: 1px solid black;
+  border: 1px solid #333;
 }
 
 .modal-buttons {
@@ -47,6 +48,19 @@ h1,h2,h3,h4,h5,label,input,button,select,option,p,textarea {
   bottom: 16px;
   right: 32px;
 } 
+
+.modal-button {
+  background-color: #f90;
+  color: rgb(0, 0, 0.9);
+  border: 0;
+  border-radius: 4px;
+  font-size: 18px;
+}
+
+.modal-button:hover{
+  background-color: #ffa31a;
+  cursor: pointer;
+}
 
 .fab {
   position: absolute;
@@ -57,29 +71,29 @@ h1,h2,h3,h4,h5,label,input,button,select,option,p,textarea {
   justify-content: center;
   height: 64px;
   width: 64px;
-  background-color: cadetblue;
+  background-color: #f90;
   border-radius: 50%;
-  border: 1px solid black;
 }
 
 .fab:hover {
-  background-color: royalblue;
+  background-color:#ffa31a;
 }
 
 /* App Bar */
 .app-bar {
-  background-color: powderblue;
+  background-color: #1b1b1b;
   display: flex;
   width: 100%;
   flex-direction: row;
   align-items: center;
+  border-bottom: 1px solid #333;
 }
 
 .app-bar-path {
   align-items: center;
   display: flex;
   flex-direction: row;
-  background-color: #6577c9;
+  background-color: rgb(0, 0, 0,9);
   border-top-right-radius: 10px;
   border-bottom-right-radius: 10px;
 }
@@ -93,6 +107,7 @@ h1,h2,h3,h4,h5,label,input,button,select,option,p,textarea {
   background-color: transparent;
   color: white;
   outline: none;
+  font-weight: bold;
 }
 
 .button-path span {
@@ -101,7 +116,8 @@ h1,h2,h3,h4,h5,label,input,button,select,option,p,textarea {
 }
 
 .button-path:hover {
-  color: #f8c82a;
+  color: #ffa31a;
+  cursor: pointer;
 }
 
 .app-bar-user-info {
@@ -117,13 +133,14 @@ h1,h2,h3,h4,h5,label,input,button,select,option,p,textarea {
   justify-content: space-around;
   box-shadow: none;
   border: none;
-  background-color: #6577c9;
+  background-color: rgb(0, 0, 0.9);
   color: white;
   outline: none;
 }
 
 .app-bar-user-info button:hover {
   color: #f8c82a;
+  cursor: pointer;
 }
 
 /* Login Page */
@@ -149,17 +166,44 @@ h1,h2,h3,h4,h5,label,input,button,select,option,p,textarea {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  background-color: rgb(0, 0, 0.9);
 }
 
-.login-group-element {
+.login-group-element{
   width: 300px;
   height: 40px;
   margin-top: 8px;
   margin-bottom: 8px;
 }
 
+.login-group input{
+  border: 1px solid #ffffff;
+  background-color: rgb(0, 0, 0.9);
+  color: #ffffff;
+}
+
+.login-group button{
+  color: #1b1b1b;
+  background-color: #f90;
+  border-radius: 6px;
+  border: 0;
+  font-size: 16px;
+  font-weight: bolder;
+}
+
+.login-group button:hover{
+  background-color: #ffa31a;
+}
+
+/* Main div */
+.main-content-div {
+  background-color: #1b1b1b;
+}
+
 /* Project */
 .project {
+  color: #ffffff;
+  font-weight: bolder;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -167,19 +211,39 @@ h1,h2,h3,h4,h5,label,input,button,select,option,p,textarea {
   margin: 8px;
   padding-left: 18px;
   border-radius: 8px;
-  border: 1px solid black;
+  border: 1px solid #333;
+}
+
+.project h3{
+  color: #ffffff;
 }
 
 .project:hover {
-  background-color: burlywood;
+  background-color: rgb(0,0, 0.9);
+  cursor: pointer;
 }
+
+.project:hover h3{
+  color:  #ffa31a;
+}
+
+.type-project-selector {
+  background-color: #f90;
+  color:rgb(0, 0, 0.9);
+  border:0;
+}
+
+.type-project-selector:hover {
+  cursor: pointer;
+}
+
 
 .tabs {
   display: flex;
   flex-direction: column;
-  border: 1px solid #ccc;
+  border: 1px solid #333;
   float: left;
-  background-color: #f1f1f1;
+  background-color: #1b1b1b;
   width: 20%;
   overflow-y: hidden;
   /* height: 100%; */
@@ -187,7 +251,7 @@ h1,h2,h3,h4,h5,label,input,button,select,option,p,textarea {
 
 .tablink {
   background-color: inherit;
-  color: black;
+  color: #ffffff;
   padding: 22px 16px;
   width: 100%;
   border: none;
@@ -199,7 +263,7 @@ h1,h2,h3,h4,h5,label,input,button,select,option,p,textarea {
 }
 
 .tablink:hover {
-  background-color: #ddd;
+  background-color: rgb(0, 0, 0.9);
 }
 
 .tabcontent { 
@@ -209,8 +273,8 @@ h1,h2,h3,h4,h5,label,input,button,select,option,p,textarea {
   flex-direction: column;
   float: left;
   overflow-y: auto;
+  border: 1px solid #333;
   border-left: none;
-  border: 1px solid #ccc;
 }
 
 .tags-list {
@@ -220,11 +284,15 @@ h1,h2,h3,h4,h5,label,input,button,select,option,p,textarea {
   margin: 8px;
   padding: 8px;
   border-radius: 8px;
-  border: 1px solid black;
+  border: 1px solid #333;
+}
+
+.tags-list h3{
+  color: #ffffff;
 }
 
 .tags-list:hover {
-  background-color: burlywood;
+  background-color: rgb(0, 0, 0.9);
 }
 
 .records-list {
@@ -235,16 +303,29 @@ h1,h2,h3,h4,h5,label,input,button,select,option,p,textarea {
   margin: 8px;
   padding-left: 10px;
   border-radius: 8px;
-  border: 1px solid black;
+  border: 1px solid #333;
+}
+
+.records-list h3{
+  color: #ffffff;
 }
 
 .records-list:hover {
-  background-color: burlywood;
+  background-color: rgb(0, 0, 0.9);
+  cursor: pointer;
 }
 
 .remove-tags-project{
   position:absolute;
   right: 12px;
+  border: 0;
+  background-color: #f90;
+  color: rgb(0, 0, 0.9);
+  border-radius: 4px;
+}
+
+.remove-tags-project:hover{
+  background-color: #ffa31a;
 }
 
 .project-tags-val {
@@ -254,11 +335,16 @@ h1,h2,h3,h4,h5,label,input,button,select,option,p,textarea {
   margin-right: 8px;
   padding: 4px 8px;
   border: 1px solid black;
-  background-color: #ccc;
+  background-color: #ffa31a;
+  color: rgb(0, 0, 0.9)
+}
+
+.project-tags-val:hover{
+  cursor: default;
 }
 
 #add-tag-value-project:hover{
-  background-color: rgb(124, 124, 124);
+  background-color: #f90;
 }
 
 .records-tags-val {
@@ -266,7 +352,49 @@ h1,h2,h3,h4,h5,label,input,button,select,option,p,textarea {
   border-radius: 80px;
   padding: 4px;
   border: 1px solid black;
-  background-color: #ccc;
+  background-color: #ffa31a;
+  color: rgb(0, 0, 0.9);
+}
+
+.records-tags-val:hover {
+  cursor: default;
+}
+
+.modify-input-button{
+  margin-left: 32px;
+  background-color: #f90;
+  color: rgb(0, 0, 0.9);
+  border: 0;
+  border-radius: 4px;
+}
+
+.modify-input-button:hover{
+  cursor: pointer;
+  background-color: #ffa31a;
+}
+
+.input-modifier{
+  background-color: #1b1b1b;
+  border: 1px solid #ffffff;
+  color: #ffffff;
+}
+
+
+.remove-record-button{
+  display: flex;
+  align-items:center;
+  float: right;
+  margin-top: 20px;
+  margin-right: 8px;
+  background-color: #f90;
+  color: rgb(0, 0, 0.9);
+  border: 0;
+  border-radius: 4px;;
+}
+
+.remove-record-button:hover{
+  cursor: pointer;
+  background-color: #ffa31a;
 }
 
 .tag-record {
@@ -277,13 +405,51 @@ h1,h2,h3,h4,h5,label,input,button,select,option,p,textarea {
   padding-top: 12px;
   padding-left: 18px;
   border-radius: 8px;
-  border: 1px solid black; 
+  border: 1px solid #333; 
+  color: #ffffff;
+  font-weight: bolder;
   width: 42%;
 }
 
 .remove-tags-records{
   position:absolute;
   right: 12px;
+  background-color: #f90;
+  color: rgb(0, 0, 0.9);
+  border: 0;
+  border-radius: 4px;
+}
+
+.select-tag-value-record{
+  margin-left: 16px;
+  background-color: #f90;
+  color:rgb(0, 0, 0.9);
+  border:0;
+}
+
+.select-tag-value-record:hover{
+  cursor: pointer;
+}
+
+.new-record-tag-selector{
+  background-color: #f90;
+  color:rgb(0, 0, 0.9);
+  border:0;
+}
+
+.new-record-tag-selector:hover{
+  cursor: pointer;
+}
+
+.new-record-tag-value-selector{
+  background-color: #f90;
+  color:rgb(0, 0, 0.9);
+  border:0;
+  margin-left: 8px;
+}
+
+.new-record-tag-value-selector:hover{
+  cursor: pointer;
 }
 
 .add-tag-record{
@@ -298,6 +464,7 @@ h1,h2,h3,h4,h5,label,input,button,select,option,p,textarea {
 }
 
 .add-tag-record:hover{
-  background-color: burlywood;
+  background-color: rgb(0, 0, 0.9);
+  cursor: pointer;
 }
 
