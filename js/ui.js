@@ -515,7 +515,7 @@ const TopBar = ({ onClickHome, onClickProject }) => {
 						.append(
 							icon("account_circle")
 						)
-						.text(token.username)
+						.text(token.id)
 				)
 				.append(
 					$(create("button"))

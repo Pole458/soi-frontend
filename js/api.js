@@ -53,7 +53,7 @@ api.logIn = ({ username, password, onSuccess, onError }) => {
 api.loginWithToken = ({ onSuccess, onError }) => {
 	$.ajax({
 		method: 'post',
-		url: 'api/login-token',
+		url: 'api/login-with-token',
 		success: function (data, textStatus) {
 			onSuccess();
 		},
