@@ -621,6 +621,10 @@ const ProjectView = ({ project, onRecordClick, onRemoveProject, refreshPage }) =
 			$(recordsTabButton)
 				.css("background-color", "#1b1b1b")
 				.css("color", "#ffffff")
+			$(eventsTabButton)
+				.css("background-color", "#1b1b1b")
+				.css("color", "#ffffff")
+
 			view.showTags()
 		})
 
@@ -634,7 +638,28 @@ const ProjectView = ({ project, onRecordClick, onRemoveProject, refreshPage }) =
 			$(tagsTabButton)
 				.css("background-color", "#1b1b1b")
 				.css("color", "#ffffff")
+			$(eventsTabButton)
+				.css("background-color", "#1b1b1b")
+				.css("color", "#ffffff")
+
 			view.showRecords();
+		})
+
+	const eventsTabButton = $(create("button"))
+		.text("Events")
+		.attr("class", "tablink")
+		.click(ev => {
+			$(eventsTabButton)
+				.css("background-color", "#ffa31a")
+				.css("color", "rgb(0, 0, 0.9)")
+			$(tagsTabButton)
+				.css("background-color", "#1b1b1b")
+				.css("color", "#ffffff")
+			$(recordsTabButton)
+				.css("background-color", "#1b1b1b")
+				.css("color", "#ffffff")
+
+			view.showEvents();
 		})
 
 	$(view)
@@ -687,6 +712,9 @@ const ProjectView = ({ project, onRecordClick, onRemoveProject, refreshPage }) =
 						)
 						.append(
 							recordsTabButton
+						)
+						.append(
+							eventsTabButton
 						)
 				)
 				.append(content)
@@ -988,6 +1016,27 @@ const ProjectView = ({ project, onRecordClick, onRemoveProject, refreshPage }) =
 		});
 	}
 
+	view.showEvents = () => {
+		view.setContent(LoadingView())
+
+		api.getEventsForProject({
+			project_id: project.id,
+			onSuccess: (events) => {
+
+				$(content).empty()
+
+				if (!events) return;
+
+				events.forEach(e => {
+					$(content).append(EventView({ e: e }));
+				})
+			},
+			onError: () => {
+				ui.showLoginPage();
+			}
+		});
+	}
+
 	view.showTags()
 
 	return view;
@@ -1174,16 +1223,16 @@ const RecordView = ({ record, projectTags, onRemoveRecord, onTagToRecord }) => {
 					$(tagNameselect)
 						.attr("class", "new-record-tag-selector")
 						.append(
-						$(create("option"))
-							.attr("value", projectTag.name)
-							.text(projectTag.name)
-							.css("color", "rgb(0, 0, 0.9)")
-					)
+							$(create("option"))
+								.attr("value", projectTag.name)
+								.text(projectTag.name)
+								.css("color", "rgb(0, 0, 0.9)")
+						)
 				}
 
 				const tagValueSelect = $(create("select"))
-				
-				$(tagValueSelect).attr("class","new-record-tag-value-selector")
+
+				$(tagValueSelect).attr("class", "new-record-tag-value-selector")
 
 				$(tagNameselect).change(() => {
 
@@ -1255,4 +1304,52 @@ const RecordView = ({ record, projectTags, onRemoveRecord, onTagToRecord }) => {
 	)
 
 	return view
+}
+
+const EventView = ({ e }) => {
+
+	const view = $(create("div"))
+		.attr("class", "events-list")
+
+	const description = $(create("h3"))
+
+	$(description)
+		.append("User ")
+		.append(
+			$(create("span"))
+				.text("#" + e.user_id)
+
+		)
+
+	if (e.action === "created project") {
+		$(description)
+			.append(" created Project ")
+			.append(
+				$(create("span"))
+					.text("#" + e.info.project_id)
+			)
+			.append(" with title: " + e.info.project_title)
+
+	} else if (e.action === "") {
+		$(description)
+			.append(" " + e.action + " ")
+			.append(
+				$(create("span"))
+					.text(e.info)
+			)
+	}
+
+	$(view).append(description)
+
+	$(view).append(
+		// Space
+		$(create("div")).css("flex", "1")
+	)
+
+	$(view).append(
+		$(create("h3"))
+			.append(new Date(e.date).toLocaleString())
+	)
+
+	return view;
 }

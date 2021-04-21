@@ -485,3 +485,19 @@ h1,h2,h3,h4,h5,label,input,button,select,option,p,textarea {
   cursor: pointer;
 }
 
+.events-list {
+  display: flex;
+  flex-direction: row;
+  margin: 8px;
+  padding: 0px 8px;
+  border-radius: 8px;
+  border: 1px solid #333;
+}
+
+.events-list span {
+  color: #f90
+}
+
+.events-list h3 {
+  color: #ffffff;
+}
