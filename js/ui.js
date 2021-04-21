@@ -406,6 +406,12 @@ const MainPage = () => {
 						project: project,
 						onRecordClick: (record) => {
 							view.showRecord(record)
+						},
+						onRemoveProject: () => {
+							view.showProjects()
+						},
+						refreshPage: (project_id) => {
+							view.showProject(project_id)
 						}
 					})
 				)
@@ -422,7 +428,13 @@ const MainPage = () => {
 		view.setContent(
 			RecordView({
 				record: record,
-				projectTags: view.selectedProject.tags
+				projectTags: view.selectedProject.tags,
+				onRemoveRecord: () => {
+					view.showProjects()
+				},
+				onTagToRecord: (record) => {
+					view.showRecord(record)
+				}
 			})
 		)
 	}
@@ -548,7 +560,7 @@ const ProjectListView = ({ project, onClick }) => {
 	return view;
 }
 
-const ProjectView = ({ project, onRecordClick }) => {
+const ProjectView = ({ project, onRecordClick, onRemoveProject, refreshPage }) => {
 
 	const view = $(create("div"))
 		.css("display", "flex")
@@ -562,35 +574,35 @@ const ProjectView = ({ project, onRecordClick }) => {
 		.css("flex-direction", "column")
 		.css("flex", "1")
 		.css("overflow-y", "hidden")
-		.append(
-			$(create("div"))
-				.attr("class", "fab")
-				.append(
-					$("<i></i>")
-						.attr("class", "eos-icons")
-						.text("add")
-				)
-				.click(ev => {
-					ModalView({
-						content: $(create("div"))
-							.append(
-								$(create("h4"))
-									.text("Add new tag: ")
-							)
-							.append(
-								$("<input></input>")
-									.attr("class", "new-tag-input")
-									.attr("type", "text")
-									.attr("name", "new-tag-name")
-									.attr("value", "")
-									.attr("placeholder", "Insert tag name")
-							),
-						onConfirm: () => {
+		// .append(
+		// 	$(create("div"))
+		// 		.attr("class", "fab")
+		// 		.append(
+		// 			$("<i></i>")
+		// 				.attr("class", "eos-icons")
+		// 				.text("add")
+		// 		)
+		// 		.click(ev => {
+		// 			ModalView({
+		// 				content: $(create("div"))
+		// 					.append(
+		// 						$(create("h4"))
+		// 							.text("Add new tag: ")
+		// 					)
+		// 					.append(
+		// 						$("<input></input>")
+		// 							.attr("class", "new-tag-input")
+		// 							.attr("type", "text")
+		// 							.attr("name", "new-tag-name")
+		// 							.attr("value", "")
+		// 							.attr("placeholder", "Insert tag name")
+		// 					),
+		// 				onConfirm: () => {
 
-						}
-					})
-				})
-		)
+		// 				}
+		// 			})
+		// 		})
+		// )
 
 	view.setContent = (v) => {
 		$(content).empty()
@@ -627,11 +639,38 @@ const ProjectView = ({ project, onRecordClick }) => {
 
 	$(view)
 		.append(
-			// Title
-			$(create("h2"))
-				.text(project.title)
-				.css("color", "#f90")
-				.css("margin-left", "16px")
+			$(create("div"))
+				.css("flex-dirextion", "row")
+				.append(
+						// Title
+						$(create("h2"))
+							.text(project.title)
+							.css("color", "#f90")
+							.css("padding-left", "20px")
+							.css("display", "inline-block")
+				)
+				.append(
+						$(create("button"))
+							.attr("class", "remove-project-button")
+							.text("Remove project")
+							.append(
+								$(create("i"))
+									.attr("class", "eos-icons")
+									.css("margin-left", "8px")
+									.text("remove_circle")
+							)
+						 	.click(ev => {
+								api.removeProject({
+									project_id: project.id,
+									onSuccess: () => {
+										onRemoveProject()
+									},
+									onError: () => {
+										
+									}
+								})
+						 	})
+				)
 		)
 		.append(
 			// Tabs
@@ -656,6 +695,56 @@ const ProjectView = ({ project, onRecordClick }) => {
 	view.showTags = () => {
 
 		$(content).empty()
+
+		$(content).append(
+			Fab({	
+					onClick: () => {
+							const taginput = $(create("input"))
+								.attr("class", "new-project-tag-input")
+								.attr("type", "text")
+								.attr("value", "")
+								.attr("placeholder", "Insert tag name...")
+								.css("color", " #ffffff")
+								.css("background-color", "#1b1b1b")
+								.css("border", "1px solid #ffffff")
+
+
+							const modal = ModalView({
+								content: $(create("div"))
+									.append(
+										$(create("p"))
+											.text("Insert new tag name:")
+											.css("color", "#ffffff")
+									)
+									.append(
+										taginput
+									),
+								onConfirm: () => {
+									const tag_name = $(taginput).val()
+
+									if (!tag_name) {
+										modal.showErrorMessage("Please insert valid tag")
+										return;
+									}
+
+									modal.disable()
+									api.addTagToProject({
+										project_id: project.id,
+										tag_name: tag_name,
+										onSuccess: () => {
+											modal.hide()
+											refreshPage(project.id)
+										},
+										onError: (errorMessage) => {
+											modal.showErrorMessage(errorMessage)
+											modal.enable()
+										}
+									})
+								}
+							})
+						}
+					})
+		)
 
 		if (!project.tags) return;
 
@@ -683,6 +772,19 @@ const ProjectView = ({ project, onRecordClick }) => {
 								.append(
 									icon("remove_circle")
 								)
+								.click(ev => {
+									api.removeTagFromProject({
+										project_id: project.id,
+										tag_name: tag.name,
+										onSuccess: () => {
+											refreshPage(project.id)
+											
+										},
+										onError: () => {
+										}
+		
+									})
+								})
 						)
 				)
 
@@ -701,7 +803,17 @@ const ProjectView = ({ project, onRecordClick }) => {
 							$(icon("remove_circle"))
 								.css("margin-left", "10px")
 								.click(ev => {
-									$(valueView).remove();
+									api.removeTagValueFromProject({
+										project_id: project.id,
+										tag_name: tag.name,
+										tag_value: value,
+										onSuccess: () => {
+											refreshPage(project.id)
+											
+										},
+										onError: () => {
+										}
+									})
 								})
 						)
 
@@ -721,22 +833,40 @@ const ProjectView = ({ project, onRecordClick }) => {
 						.attr("name", "new-tag-value")
 						.attr("value", "")
 						.attr("placeholder", "Insert tag value")
+						.css("color", " #ffffff")
+						.css("background-color", "#1b1b1b")
+						.css("border", "1px solid #ffffff")
 
-					ModalView({
+					const modalVal = ModalView({
 						content: $(create("div"))
 							.append(
 								$(create("h4"))
 									.text("Add tag value: ")
+									.css("color", "#ffffff")
 							)
 							.append(input),
 						onConfirm: () => {
-							const tagName = $(input).val()
+							const tagValue = $(input).val()
 
-							if (!tagName) {
-
+							if (!tagValue) {
+								modal.showErrorMessage("Please insert valid tag value")
+								return;
 							}
 
-							api.add
+							modalVal.disable()
+							api.addTagValueToProject({
+								project_id: project.id,
+								tag_name: tag.name,
+								tag_value: tagValue,
+								onSuccess: () => {
+									modalVal.hide()
+									refreshPage(project.id)
+								},
+								onError: (errorMessage) => {
+									modalVal.showErrorMessage(errorMessage)
+									modalVal.enable()
+								}
+							})
 
 						}
 					})
@@ -745,16 +875,6 @@ const ProjectView = ({ project, onRecordClick }) => {
 			$(valuesList).append(addValueView);
 
 			$(tagView).append(valuesList)
-
-			$(content).append(
-				Fab({
-					onClick: () => {
-						ModalView({
-
-						})
-					}
-				})
-			)
 
 			$(content).append(tagView);
 		})
@@ -772,7 +892,50 @@ const ProjectView = ({ project, onRecordClick }) => {
 				$(content).append(
 					Fab({
 						onClick: () => {
-							ModalView({
+							const recordinput = $(create("input"))
+								.attr("class", "new-record-input")
+								.attr("type", "text")
+								.attr("value", "")
+								.attr("placeholder", "Insert record input...")
+								.css("color", " #ffffff")
+								.css("background-color", "#1b1b1b")
+								.css("border", "1px solid #ffffff")
+
+
+							const modal = ModalView({
+								content: $(create("div"))
+									.append(
+										$(create("p"))
+											.text("Insert new record:")
+											.css("color", "#ffffff")
+									)
+									.append(
+										recordinput
+									),
+								onConfirm: () => {
+									const input = $(recordinput).val()
+
+									if (!input) {
+										modal.showErrorMessage("Please insert valid input")
+										return;
+									}
+
+									modal.disable()
+									
+									console.log(project.id)
+									api.addRecord({
+										project_id: project.id,
+										input: input,
+										onSuccess: () => {
+											modal.hide()
+											refreshPage(project.id)
+										},
+										onError: (errorMessage) => {
+											modal.showErrorMessage(errorMessage)
+											modal.enable()
+										}
+									})
+								}
 							})
 						}
 					})
@@ -830,9 +993,11 @@ const ProjectView = ({ project, onRecordClick }) => {
 	return view;
 }
 
-const RecordView = ({ record, projectTags }) => {
+const RecordView = ({ record, projectTags, onRemoveRecord, onTagToRecord }) => {
 
 	const view = create("div")
+
+	
 
 	const input = create("div");
 	$(input)
@@ -840,6 +1005,7 @@ const RecordView = ({ record, projectTags }) => {
 		//.css("display", "flex")
 		.append(
 			$(create("h1"))
+				.attr("id", "record-view-input")
 				.text(record.input)
 				.css("padding-left", "20px")
 				.css("color", "#f90")
@@ -854,7 +1020,7 @@ const RecordView = ({ record, projectTags }) => {
 						.text("mode_edit")
 				)
 				.click(ev => {
-					ModalView({
+					const modal = ModalView({
 						content: $(create("div"))
 							.append(
 								$(create("h4"))
@@ -864,11 +1030,34 @@ const RecordView = ({ record, projectTags }) => {
 							.append(
 								$(create("input"))
 									.attr("class", "input-modifier")
+									.attr("id", "record-input-modifier")
 									.attr("type", "text")
 									.attr("name", "record-input-mod")
 									.attr("value", record.input)
 							),
-						onConfirm: () => { }
+						onConfirm: () => { 
+							const input = $("#record-input-modifier").val()
+
+							if (!input) {
+								modal.showErrorMessage("Please insert valid input")
+								return;
+							}
+
+							modal.disable()
+
+							api.modifyInputRecord({
+								record_id: record.id,
+								input: input,
+								onSuccess: () => {
+									$("#record-view-input").text(input);
+									modal.hide()
+								},
+								onError: (errorMessage) => {
+									modal.showErrorMessage(errorMessage)
+									modal.enable()
+								}
+							})
+						}
 					})
 				})
 		)
@@ -882,6 +1071,17 @@ const RecordView = ({ record, projectTags }) => {
 						.css("margin-left", "8px")
 						.text("remove_circle")
 				)
+				.click(ev => {
+					api.removeRecord({
+						record_id: record.id,
+						onSuccess: () => {
+							onRemoveRecord();
+						},
+						onError: () => {
+							
+						}
+					})
+				})
 		)
 
 	$(view).append(input)
@@ -897,6 +1097,20 @@ const RecordView = ({ record, projectTags }) => {
 
 			const select = $(create("select"))
 				.attr("class", "select-tag-value-record")
+				.change(function() {
+					const name = tag.name
+					const value = $(select).val()
+					api.setTagToRecord({
+						record_id: record.id,
+						tag_name: name,
+						tag_value: value,
+						onSuccess: () => {				
+						},
+						onError: () => {
+						}
+					})
+				})
+				//.attr("onchange", "if (this.selectedIndex) doSomething();")
 			for (const projectTag of projectTags) {
 				if (projectTag.name == tag.name) {
 					for (const value of projectTag.values) {
@@ -922,6 +1136,26 @@ const RecordView = ({ record, projectTags }) => {
 					$(create("button"))
 						.attr("class", "remove-tags-records")
 						.append(icon("remove_circle"))
+						.click(ev => {
+							api.removeTagFromRecord({
+								record_id: record.id,
+								tag_name: tag.name,
+								onSuccess: () => {
+									api.getRecord({
+										id: record.id,
+										onSuccess: (record2) => {
+											onTagToRecord(record2)
+										},
+										onError: () => {
+										}
+									})
+									
+								},
+								onError: () => {
+								}
+
+							})
+						})
 				)
 
 			$(tagsList).append(tagView);
@@ -972,7 +1206,7 @@ const RecordView = ({ record, projectTags }) => {
 					}
 				})
 
-				ModalView({
+				const modal2 = ModalView({
 					content: $(create("div"))
 						.append(
 							$(create("h4"))
@@ -982,7 +1216,39 @@ const RecordView = ({ record, projectTags }) => {
 						.append(tagNameselect)
 						.append(tagValueSelect)
 					,
-					onConfirm: () => { }
+					onConfirm: () => { 
+						const name = $(tagNameselect).val()
+						const value = $(tagValueSelect).val()
+
+						if (!value || !name) {
+							modal2.showErrorMessage("Please select name and value")
+							return;
+						}
+
+						modal2.disable()
+
+						api.setTagToRecord({
+							record_id: record.id,
+							tag_name: name,
+							tag_value: value,
+							onSuccess: () => {
+								modal2.hide()
+								api.getRecord({
+									id: record.id,
+									onSuccess: (record2) => {
+										onTagToRecord(record2)
+									},
+									onError: () => {
+									}
+								})
+								
+							},
+							onError: (errorMessage) => {
+								modal2.showErrorMessage(errorMessage)
+								modal2.enable()
+							}
+						})
+					}
 				})
 			}
 		})

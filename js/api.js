@@ -133,3 +133,144 @@ api.addProject = ({ title, onSuccess, onError }) => {
 		}
 	})
 }
+
+api.addRecord = ({ project_id, input, onSuccess, onError }) => {
+	$.ajax({
+		method: "post",
+		url: "api/record",
+		data: { 'project_id': project_id, 'input': input },
+		success: function (data, textStatus) {
+			const record = data;
+			onSuccess(record);
+		},
+		error: function (jqXHR, textStatus, errorThrown) {
+			onError(jqXHR.responseJSON.error);
+		}
+	})
+}
+
+api.removeProject = ({ project_id, onSuccess, onError }) => {
+	$.ajax({
+		method: "post",
+		url: "api/remove-project",
+		data: { 'project_id': project_id },
+		success: function (data, textStatus) {
+			onSuccess();
+		},
+		error: function (jqXHR, textStatus, errorThrown) {
+			onError();
+		}
+	})
+}
+
+api.removeRecord = ({ record_id, onSuccess, onError }) => {
+	$.ajax({
+		method: "post",
+		url: "api/remove-record",
+		data: { 'record_id': record_id },
+		success: function (data, textStatus) {
+			onSuccess();
+		},
+		error: function (jqXHR, textStatus, errorThrown) {
+			onError();
+		}
+	})
+}
+
+api.addTagToProject = ({ project_id, tag_name, onSuccess, onError }) => {
+	$.ajax({
+		method: "post",
+		url: "api/tag-project",
+		data: { 'project_id': project_id, 'tag_name': tag_name },
+		success: function (data, textStatus) {
+			onSuccess();
+		},
+		error: function (jqXHR, textStatus, errorThrown) {
+			onError();
+		}
+	})
+}
+
+api.addTagValueToProject = ({ project_id, tag_name, tag_value, onSuccess, onError }) => {
+	$.ajax({
+		method: "post",
+		url: "api/project-tag-value",
+		data: { 'project_id': project_id, 'tag_name': tag_name, 'tag_value': tag_value },
+		success: function (data, textStatus) {
+			onSuccess();
+		},
+		error: function (jqXHR, textStatus, errorThrown) {
+			onError();
+		}
+	})
+}
+
+api.removeTagFromProject = ({ project_id, tag_name, onSuccess, onError }) => {
+	$.ajax({
+		method: "post",
+		url: "api/project-remove-tag",
+		data: { 'project_id': project_id, 'tag_name': tag_name },
+		success: function (data, textStatus) {
+			onSuccess();
+		},
+		error: function (jqXHR, textStatus, errorThrown) {
+			onError();
+		}
+	})
+}
+
+api.removeTagValueFromProject = ({ project_id, tag_name, tag_value, onSuccess, onError }) => {
+	$.ajax({
+		method: "post",
+		url: "api/project-remove-tag-value",
+		data: { 'project_id': project_id, 'tag_name': tag_name, 'tag_value': tag_value },
+		success: function (data, textStatus) {
+			onSuccess();
+		},
+		error: function (jqXHR, textStatus, errorThrown) {
+			onError();
+		}
+	})
+}
+
+api.setTagToRecord = ({ record_id, tag_name, tag_value, onSuccess, onError }) => {
+	$.ajax({
+		method: "post",
+		url: "api/tag-record",
+		data: { 'record_id': record_id, 'tag_name': tag_name, 'tag_value': tag_value },
+		success: function (data, textStatus) {
+			onSuccess();
+		},
+		error: function (jqXHR, textStatus, errorThrown) {
+			onError();
+		}
+	})
+}
+
+api.removeTagFromRecord = ({ record_id, tag_name, onSuccess, onError }) => {
+	$.ajax({
+		method: "post",
+		url: "api/remove-record-tag",
+		data: { 'record_id': record_id, 'tag_name': tag_name },
+		success: function (data, textStatus) {
+			onSuccess();
+		},
+		error: function (jqXHR, textStatus, errorThrown) {
+			onError();
+		}
+	})
+}
+
+api.modifyInputRecord = ({ record_id, input, onSuccess, onError }) => {
+	$.ajax({
+		method: "post",
+		url: "api/modify-record",
+		data: { 'record_id': record_id, 'input': input },
+		success: function (data, textStatus) {
+			onSuccess();
+		},
+		error: function (jqXHR, textStatus, errorThrown) {
+			onError();
+		}
+	})
+}
