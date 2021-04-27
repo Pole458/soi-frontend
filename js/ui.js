@@ -250,7 +250,9 @@ const LoginPage = () => {
 
 const MainPage = () => {
 
-	const view = create("div")
+	const view = $(create("div"))
+		.css("display", "flex")
+		.css("overflow-y", "hidden")
 
 	view.selectedProject = null
 	view.selectedRecord = null
@@ -763,39 +765,10 @@ const ProjectView = ({ project, onRecordClick, onRemoveProject, refreshPage }) =
 
 	const content = $(create("div"))
 		.attr("class", "tabcontent")
-		.css("display", "flex")
-		.css("flex-direction", "column")
+		// .css("display", "flex")
+		// .css("flex-direction", "column")
 		.css("flex", "1")
-		.css("overflow-y", "hidden")
-		// .append(
-		// 	$(create("div"))
-		// 		.attr("class", "fab")
-		// 		.append(
-		// 			$("<i></i>")
-		// 				.attr("class", "eos-icons")
-		// 				.text("add")
-		// 		)
-		// 		.click(ev => {
-		// 			ModalView({
-		// 				content: $(create("div"))
-		// 					.append(
-		// 						$(create("h4"))
-		// 							.text("Add new tag: ")
-		// 					)
-		// 					.append(
-		// 						$("<input></input>")
-		// 							.attr("class", "new-tag-input")
-		// 							.attr("type", "text")
-		// 							.attr("name", "new-tag-name")
-		// 							.attr("value", "")
-		// 							.attr("placeholder", "Insert tag name")
-		// 					),
-		// 				onConfirm: () => {
-
-		// 				}
-		// 			})
-		// 		})
-		// )
+		.css("overflow-y", "auto")
 
 	view.setContent = (v) => {
 		$(content).empty()
@@ -860,34 +833,34 @@ const ProjectView = ({ project, onRecordClick, onRemoveProject, refreshPage }) =
 			$(create("div"))
 				.css("flex-dirextion", "row")
 				.append(
-						// Title
-						$(create("h2"))
-							.text(project.title)
-							.css("color", "#f90")
-							.css("padding-left", "20px")
-							.css("display", "inline-block")
+					// Title
+					$(create("h2"))
+						.text(project.title)
+						.css("color", "#f90")
+						.css("padding-left", "20px")
+						.css("display", "inline-block")
 				)
 				.append(
-						$(create("button"))
-							.attr("class", "remove-project-button")
-							.text("Remove project")
-							.append(
-								$(create("i"))
-									.attr("class", "eos-icons")
-									.css("margin-left", "8px")
-									.text("remove_circle")
-							)
-						 	.click(ev => {
-								api.removeProject({
-									project_id: project.id,
-									onSuccess: () => {
-										onRemoveProject()
-									},
-									onError: () => {
-										
-									}
-								})
-						 	})
+					$(create("button"))
+						.attr("class", "remove-project-button")
+						.text("Remove project")
+						.append(
+							$(create("i"))
+								.attr("class", "eos-icons")
+								.css("margin-left", "8px")
+								.text("remove_circle")
+						)
+						.click(ev => {
+							api.removeProject({
+								project_id: project.id,
+								onSuccess: () => {
+									onRemoveProject()
+								},
+								onError: () => {
+
+								}
+							})
+						})
 				)
 		)
 		.append(
@@ -918,53 +891,53 @@ const ProjectView = ({ project, onRecordClick, onRemoveProject, refreshPage }) =
 		$(content).empty()
 
 		$(content).append(
-			Fab({	
-					onClick: () => {
-							const taginput = $(create("input"))
-								.attr("class", "new-project-tag-input")
-								.attr("type", "text")
-								.attr("value", "")
-								.attr("placeholder", "Insert tag name...")
-								.css("color", " #ffffff")
-								.css("background-color", "#1b1b1b")
-								.css("border", "1px solid #ffffff")
+			Fab({
+				onClick: () => {
+					const taginput = $(create("input"))
+						.attr("class", "new-project-tag-input")
+						.attr("type", "text")
+						.attr("value", "")
+						.attr("placeholder", "Insert tag name...")
+						.css("color", " #ffffff")
+						.css("background-color", "#1b1b1b")
+						.css("border", "1px solid #ffffff")
 
 
-							const modal = ModalView({
-								content: $(create("div"))
-									.append(
-										$(create("p"))
-											.text("Insert new tag name:")
-											.css("color", "#ffffff")
-									)
-									.append(
-										taginput
-									),
-								onConfirm: () => {
-									const tag_name = $(taginput).val()
+					const modal = ModalView({
+						content: $(create("div"))
+							.append(
+								$(create("p"))
+									.text("Insert new tag name:")
+									.css("color", "#ffffff")
+							)
+							.append(
+								taginput
+							),
+						onConfirm: () => {
+							const tag_name = $(taginput).val()
 
-									if (!tag_name) {
-										modal.showErrorMessage("Please insert valid tag")
-										return;
-									}
+							if (!tag_name) {
+								modal.showErrorMessage("Please insert valid tag")
+								return;
+							}
 
-									modal.disable()
-									api.addTagToProject({
-										project_id: project.id,
-										tag_name: tag_name,
-										onSuccess: () => {
-											modal.hide()
-											refreshPage(project.id)
-										},
-										onError: (errorMessage) => {
-											modal.showErrorMessage(errorMessage)
-											modal.enable()
-										}
-									})
+							modal.disable()
+							api.addTagToProject({
+								project_id: project.id,
+								tag_name: tag_name,
+								onSuccess: () => {
+									modal.hide()
+									refreshPage(project.id)
+								},
+								onError: (errorMessage) => {
+									modal.showErrorMessage(errorMessage)
+									modal.enable()
 								}
 							})
 						}
 					})
+				}
+			})
 		)
 
 		if (!project.tags) return;
@@ -999,11 +972,11 @@ const ProjectView = ({ project, onRecordClick, onRemoveProject, refreshPage }) =
 										tag_name: tag.name,
 										onSuccess: () => {
 											refreshPage(project.id)
-											
+
 										},
 										onError: () => {
 										}
-		
+
 									})
 								})
 						)
@@ -1030,7 +1003,7 @@ const ProjectView = ({ project, onRecordClick, onRemoveProject, refreshPage }) =
 										tag_value: value,
 										onSuccess: () => {
 											refreshPage(project.id)
-											
+
 										},
 										onError: () => {
 										}
@@ -1142,7 +1115,7 @@ const ProjectView = ({ project, onRecordClick, onRemoveProject, refreshPage }) =
 									}
 
 									modal.disable()
-									
+
 									console.log(project.id)
 									api.addRecord({
 										project_id: project.id,
@@ -1237,22 +1210,14 @@ const ProjectView = ({ project, onRecordClick, onRemoveProject, refreshPage }) =
 
 const RecordView = ({ record, projectTags, onRemoveRecord, onTagToRecord }) => {
 
-	const view = create("div")
-
-	
+	const view = $(create("div"))
+		.css("display", "flex")
+		.css("flex-direction", "column")
+		.css("overflow-y", "hidden")
 
 	const input = create("div");
 	$(input)
 		.css("flex-direction", "row")
-		//.css("display", "flex")
-		.append(
-			$(create("h1"))
-				.attr("id", "record-view-input")
-				.text(record.input)
-				.css("padding-left", "20px")
-				.css("color", "#f90")
-				.css("display", "inline-block")
-		)
 		.append(
 			$(create("button"))
 				.attr("class", "modify-input-button")
@@ -1277,7 +1242,7 @@ const RecordView = ({ record, projectTags, onRemoveRecord, onTagToRecord }) => {
 									.attr("name", "record-input-mod")
 									.attr("value", record.input)
 							),
-						onConfirm: () => { 
+						onConfirm: () => {
 							const input = $("#record-input-modifier").val()
 
 							if (!input) {
@@ -1304,6 +1269,14 @@ const RecordView = ({ record, projectTags, onRemoveRecord, onTagToRecord }) => {
 				})
 		)
 		.append(
+			$(create("h1"))
+				.attr("id", "record-view-input")
+				.text(record.input)
+				.css("padding-left", "20px")
+				.css("color", "#f90")
+				.css("display", "inline-block")
+		)
+		.append(
 			$(create("button"))
 				.attr("class", "remove-record-button")
 				.text("Remove record")
@@ -1320,7 +1293,7 @@ const RecordView = ({ record, projectTags, onRemoveRecord, onTagToRecord }) => {
 							onRemoveRecord();
 						},
 						onError: () => {
-							
+
 						}
 					})
 				})
@@ -1328,31 +1301,40 @@ const RecordView = ({ record, projectTags, onRemoveRecord, onTagToRecord }) => {
 
 	$(view).append(input)
 
+	$(view).append(
+		$(create("h2"))
+			.text("Tags")
+			.css("color", "#f90")
+			.css("padding-left", "20px")
+	)
+
 	const tagsList = $(create("div"))
+		.css("display", "flex")
+		.css("flex-grow", "1")
+		.css("min-height", "128px")
 		.css("flex-direction", "column")
+		.css("overflow-y", "auto")
+		.css("background-color", "#333")
+		.css("border-radius", "8px")
+		.css("margin", "16px")
 
 	if (record.tags) {
-
 		record.tags.forEach(tag => {
-
 			const tagView = create("div")
 
 			const select = $(create("select"))
 				.attr("class", "select-tag-value-record")
-				.change(function() {
+				.change(function () {
 					const name = tag.name
 					const value = $(select).val()
 					api.setTagToRecord({
 						record_id: record.id,
 						tag_name: name,
 						tag_value: value,
-						onSuccess: () => {				
-						},
-						onError: () => {
-						}
+						onSuccess: () => { },
+						onError: () => { }
 					})
 				})
-				//.attr("onchange", "if (this.selectedIndex) doSomething();")
 			for (const projectTag of projectTags) {
 				if (projectTag.name == tag.name) {
 					for (const value of projectTag.values) {
@@ -1391,7 +1373,7 @@ const RecordView = ({ record, projectTags, onRemoveRecord, onTagToRecord }) => {
 										onError: () => {
 										}
 									})
-									
+
 								},
 								onError: () => {
 								}
@@ -1448,6 +1430,8 @@ const RecordView = ({ record, projectTags, onRemoveRecord, onTagToRecord }) => {
 					}
 				})
 
+				$(tagNameselect).trigger("change")
+
 				const modal2 = ModalView({
 					content: $(create("div"))
 						.append(
@@ -1458,7 +1442,7 @@ const RecordView = ({ record, projectTags, onRemoveRecord, onTagToRecord }) => {
 						.append(tagNameselect)
 						.append(tagValueSelect)
 					,
-					onConfirm: () => { 
+					onConfirm: () => {
 						const name = $(tagNameselect).val()
 						const value = $(tagValueSelect).val()
 
@@ -1483,7 +1467,7 @@ const RecordView = ({ record, projectTags, onRemoveRecord, onTagToRecord }) => {
 									onError: () => {
 									}
 								})
-								
+
 							},
 							onError: (errorMessage) => {
 								modal2.showErrorMessage(errorMessage)
@@ -1495,6 +1479,40 @@ const RecordView = ({ record, projectTags, onRemoveRecord, onTagToRecord }) => {
 			}
 		})
 	)
+
+	const eventsList = $(create("div"))
+		.css("display", "flex")
+		.css("flex-grow", "1")
+		.css("min-height", "128px")
+		.css("flex-direction", "column")
+		.css("overflow-y", "auto")
+		.css("background-color", "#333")
+		.css("border-radius", "8px")
+		.css("margin", "16px")
+
+
+	$(view).append(
+		$(create("h2"))
+			.text("Events")
+			.css("color", "#f90")
+			.css("padding-left", "20px")
+	)
+
+	$(view).append(eventsList)
+
+	api.getEventsForRecord({
+		record_id: record.id,
+		onSuccess: (events) => {
+			$(eventsList).empty()
+
+			if (!events) return;
+
+			events.forEach(e => {
+				$(eventsList).append(EventView({ e: e }))
+			});
+		},
+		onError: () => { }
+	})
 
 	return view
 }
@@ -1514,7 +1532,17 @@ const EventView = ({ e }) => {
 
 		)
 
-	if (e.action === "created project") {
+	if (e.action === "") {
+		$(description)
+			.append(" " + e.action + " ")
+			.append(
+				$(create("span"))
+					.text(e.info)
+			)
+	} else if (e.action === "signed in") {
+		$(description)
+			.append(" signed in")
+	} else if (e.action === "created project") {
 		$(description)
 			.append(" created Project ")
 			.append(
@@ -1523,12 +1551,125 @@ const EventView = ({ e }) => {
 			)
 			.append(" with title: " + e.info.project_title)
 
-	} else if (e.action === "") {
+	} else if (e.action === "added record to project") {
 		$(description)
-			.append(" " + e.action + " ")
+			.append(" added Record ")
 			.append(
 				$(create("span"))
-					.text(e.info)
+					.text("#" + e.info.record_id)
+			)
+			.append(" to Project ")
+			.append(
+				$(create("span"))
+					.text("#" + e.info.project_id)
+			)
+	} else if (e.action === "deleted project") {
+		$(description)
+			.append(" deleted Project ")
+			.append(
+				$(create("span"))
+					.text("#" + e.info.project_id)
+			)
+	} else if (e.action === "deleted record") {
+		$(description)
+			.append(" deleted Record ")
+			.append(
+				$(create("span"))
+					.text("#" + e.info.record_id)
+			)
+	} else if (e.action === "added tag to project") {
+		$(description)
+			.append(" added Tag ")
+			.append(
+				$(create("span"))
+					.text(e.info.tag_name)
+			)
+			.append(" to Project ")
+			.append(
+				$(create("span"))
+					.text("#" + e.info.project_id)
+			)
+	} else if (e.action === "added value to project") {
+		$(description)
+			.append(" added Tag Value ")
+			.append(
+				$(create("span"))
+					.text(e.info.tag_value)
+			)
+			.append(" for Tag ")
+			.append(
+				$(create("span"))
+					.text(e.info.tag_name)
+			)
+			.append(" to Project ")
+			.append(
+				$(create("span"))
+					.text("#" + e.info.project_id)
+			)
+	} else if (e.action === "removed tag from project") {
+		$(description)
+			.append(" removed Tag ")
+			.append(
+				$(create("span"))
+					.text(e.info.tag_name)
+			)
+			.append(" from Project ")
+			.append(
+				$(create("span"))
+					.text("#" + e.info.project_id)
+			)
+	} else if (e.action === "removed tag value from project") {
+		$(description)
+			.append(" removed Tag Value ")
+			.append(
+				$(create("span"))
+					.text(e.info.tag_value)
+			)
+			.append(" for Tag ")
+			.append(
+				$(create("span"))
+					.text(e.info.tag_name)
+			)
+			.append(" from Project ")
+			.append(
+				$(create("span"))
+					.text("#" + e.info.project_id)
+			)
+	} else if (e.action === "set tag to record") {
+		$(description)
+			.append(" set Tag ")
+			.append(
+				$(create("span"))
+					.text(e.info.tag_name)
+			)
+			.append(":")
+			.append(
+				$(create("span"))
+					.text(e.info.tag_value)
+			)
+			.append(" to Record ")
+			.append(
+				$(create("span"))
+					.text("#" + e.info.record_id)
+			)
+	} else if (e.action === "removed tag from record") {
+		$(description)
+			.append(" removed ")
+			.append(
+				$(create("span"))
+					.text(e.info.tag_name)
+			)
+			.append(" from Record ")
+			.append(
+				$(create("span"))
+					.text("#" + e.info.record_id)
+			)
+	} else if (e.action === " modified input of record") {
+		$(description)
+			.append(" modified Input for Record ")
+			.append(
+				$(create("span"))
+					.text("#" + e.info.record_id)
 			)
 	}
 
