@@ -269,11 +269,15 @@ const MainPage = () => {
 		onClickProject: () => {
 			view.selectedRecord = null
 			view.showProject(view.selectedProject.id)
+		},
+		onClickName: (user) => {
+			view.showUser(user)
 		}
 	});
 
 	const content = $(create("div"))
 		.attr("class", "main-content-div")
+		.attr("id", "main-content-view")
 		.css("flex", "1")
 		.css("display", "flex")
 		.css("flex-direction", "column")
@@ -439,10 +443,21 @@ const MainPage = () => {
 		)
 	}
 
+	view.showUser = (user) => {
+		view.setContent(
+			UserView({
+				user: user,
+				onReturn: () => {
+					view.showProjects()
+				}
+			})
+		)
+	}
+
 	return view;
 }
 
-const TopBar = ({ onClickHome, onClickProject }) => {
+const TopBar = ({ onClickHome, onClickProject, onClickName }) => {
 
 	const view = create("div")
 
@@ -487,6 +502,7 @@ const TopBar = ({ onClickHome, onClickProject }) => {
 		$(recordPathView).attr("hidden", true)
 	}
 
+
 	$(view)
 		.attr("class", "app-bar")
 		.append(
@@ -524,10 +540,24 @@ const TopBar = ({ onClickHome, onClickProject }) => {
 				.attr("class", "app-bar-user-info")
 				.append(
 					$(create("button"))
+						.attr("id", "user-name-button")
 						.append(
 							icon("account_circle")
 						)
-						.text(token.id)
+						.click(ev => {
+							api.getUser({
+								id: token.id,
+								onSuccess: (user) => {
+									onClickName(user)
+								},
+								onError: () => {
+						
+								}
+							})
+
+							
+						})
+						
 				)
 				.append(
 					$(create("button"))
@@ -541,7 +571,170 @@ const TopBar = ({ onClickHome, onClickProject }) => {
 				)
 		)
 
+	api.getUser({
+		id: token.id,
+		onSuccess: (user) => {
+			const name = user.username;
+			$("#user-name-button").text(name);
+		},
+		onError: () => {
+
+		}
+	})
+
 	return view;
+}
+
+const UserView = ({ user, onReturn }) => {
+
+	const view = $(create("div"))
+		.css("display", "flex")
+		.css("flex-direction", "column")
+		.css("flex", "1")
+		.css("overflow-y", "hidden")
+	
+	console.log("ciaooovgyvygo")
+
+	const content = $(create("div"))
+		.attr("class", "tabcontent-user")
+		.css("display", "flex")
+		.css("flex-direction", "column")
+		.css("flex", "1")
+		.css("overflow-y", "hidden")
+
+	view.setContent = (v) => {
+			$(content).empty()
+			$(content).append(v)
+		}
+
+	const infoTabButton = $(create("button"))
+		.text("Informations")
+		.attr("class", "tablink")
+		.css("background-color", "#ffa31a")
+		.css("color", "rgb(0, 0, 0.9)")
+		.click(ev => {
+			$(infoTabButton)
+				.css("background-color", "#ffa31a")
+				.css("color", "rgb(0, 0, 0.9)")
+			$(eventsTabButton)
+				.css("background-color", "#1b1b1b")
+				.css("color", "#ffffff")
+			$(otherTabButton)
+				.css("background-color", "#1b1b1b")
+				.css("color", "#ffffff")
+
+			view.showInfo();
+		})
+
+	const eventsTabButton = $(create("button"))
+		.text("Events")
+		.attr("class", "tablink")
+		.click(ev => {
+			$(eventsTabButton)
+				.css("background-color", "#ffa31a")
+				.css("color", "rgb(0, 0, 0.9)")
+			$(infoTabButton)
+				.css("background-color", "#1b1b1b")
+				.css("color", "#ffffff")
+			$(otherTabButton)
+				.css("background-color", "#1b1b1b")
+				.css("color", "#ffffff")
+
+			view.showEvents()
+		})
+
+	const otherTabButton = $(create("button"))
+		.text("Other")
+		.attr("class", "tablink")
+		.click(ev => {
+			$(otherTabButton)
+				.css("background-color", "#ffa31a")
+				.css("color", "rgb(0, 0, 0.9)")
+			$(infoTabButton)
+				.css("background-color", "#1b1b1b")
+				.css("color", "#ffffff")
+			$(eventsTabButton)
+				.css("background-color", "#1b1b1b")
+				.css("color", "#ffffff")
+
+	})
+
+	$(view)
+		.append(
+			$(create("div"))
+				.css("flex-dirextion", "row")
+				.append(
+						// User
+						$(create("h2"))
+							.text(user.username)
+							.css("color", "#f90")
+							.css("padding-left", "20px")
+							.css("display", "inline-block")
+				)
+		)
+		.append(
+			// Tabs
+			$(create("div"))
+				.css("display", "flex")
+				.css("flex-direction", "row")
+				.css("flex", "1")
+				.css("overflow-y", "hidden")
+				.append(
+					$(create("div"))
+						.attr("class", "tabs")
+						.append(
+							infoTabButton
+						)
+						.append(
+							eventsTabButton
+						)
+						.append(
+							otherTabButton
+						)
+				)
+				.append(content)
+		)
+
+	view.showInfo = () => {
+		console.log(user.username)
+
+		$(content).empty()
+
+		const infoList = $(create("div"))
+			.css("flex-direction", "column")
+
+		$(infoList)
+			.append(
+				$(create("h4"))
+					.text("Ciao")
+			)
+
+
+	}
+	
+	view.showEvents = () => {
+			view.setContent(LoadingView())
+	
+			api.getEventsForProject({
+				project_id: project.id,
+				onSuccess: (events) => {
+	
+					$(content).empty()
+	
+					if (!events) return;
+	
+					events.forEach(e => {
+						$(content).append(EventView({ e: e }));
+					})
+				},
+				onError: () => {
+					ui.showLoginPage();
+				}
+			});
+		}
+
+	return view;
+	
 }
 
 const ProjectListView = ({ project, onClick }) => {

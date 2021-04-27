@@ -63,6 +63,20 @@ api.loginWithToken = ({ onSuccess, onError }) => {
 	});
 }
 
+api.getUser = ({ id, onSuccess, onError }) => {
+	$.ajax({
+		method: "get",
+		url: "api/user/" + id,
+		success: function (data, textStatus) {
+			const user = data;
+			onSuccess(user);
+		},
+		error: function (jqXHR, textStatus, errorThrown) {
+			onError();
+		}
+	});
+}
+
 api.getProjects = ({ onSuccess, onError }) => {
 	$.ajax({
 		method: "get",
