@@ -148,6 +148,20 @@ api.addProject = ({ title, onSuccess, onError }) => {
 	})
 }
 
+api.getEventsForUser = ({user_id, onSuccess, onError}) => {
+	$.ajax({
+		method: "get",
+		url: "api/user/" + user_id + "/events",
+		success: function (data, textStatus) {
+			const events = data;
+			onSuccess(events);
+		},
+		error: function (jqXHR, textStatus, errorThrown) {
+			onError(jqXHR.responseJSON.error);
+		}
+	})
+}
+
 api.getEventsForProject = ({project_id, onSuccess, onError}) => {
 	$.ajax({
 		method: "get",

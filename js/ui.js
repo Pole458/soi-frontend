@@ -300,6 +300,9 @@ const MainPage = () => {
 
 	view.showProjects = () => {
 
+		topBar.hidePathProject()
+		topBar.hidePathRecord()
+
 		view.setContent(LoadingView())
 
 		api.getProjects({
@@ -446,6 +449,8 @@ const MainPage = () => {
 	}
 
 	view.showUser = (user) => {
+		topBar.hidePathProject()
+		topBar.hidePathRecord()
 		view.setContent(
 			UserView({
 				user: user,
@@ -598,11 +603,11 @@ const UserView = ({ user, onReturn }) => {
 	console.log("ciaooovgyvygo")
 
 	const content = $(create("div"))
-		.attr("class", "tabcontent-user")
+		.attr("class", "tabcontent")
 		.css("display", "flex")
 		.css("flex-direction", "column")
 		.css("flex", "1")
-		.css("overflow-y", "hidden")
+		.css("overflow-y", "auto")
 
 	view.setContent = (v) => {
 			$(content).empty()
@@ -659,7 +664,54 @@ const UserView = ({ user, onReturn }) => {
 				.css("background-color", "#1b1b1b")
 				.css("color", "#ffffff")
 
+			view.showOther();
 	})
+			
+	$(content).append(
+		$(create("div"))
+			.css("flex-direction", "row")
+			.css("display", "flex")
+			.css("padding-left", "12px")
+			.append(
+				$(create("h4"))
+					.text("Username: ")
+					.css("color", "#ffffff")
+			)
+			.append(
+				$(create("h4"))
+					.text(user.username)
+					.css("padding-left", "4px")
+					.css("color", "#ffffff")
+			)
+	)
+	api.getEventsForUser({
+		user_id: user.id,
+		onSuccess: (events) => {
+	
+			if (!events) return;
+	
+			$(content).append(
+				$(create("div"))
+					.css("flex-direction", "row")
+					.css("display", "flex")
+					.css("padding-left", "12px")
+					.append(
+						$(create("h4"))
+							.text("Sign in date: ")
+							.css("color", "#ffffff")
+					)
+					.append(
+						$(create("h4"))
+							.text(new Date(events[0].date).toLocaleString())
+							.css("padding-left", "4px")
+							.css("color", "#ffffff")
+					)
+			)
+		},
+		onError: () => {
+			ui.showLoginPage();
+		}
+	});
 
 	$(view)
 		.append(
@@ -696,44 +748,92 @@ const UserView = ({ user, onReturn }) => {
 				)
 				.append(content)
 		)
+		
 
 	view.showInfo = () => {
-		console.log(user.username)
+		console.log(user.id)
 
 		$(content).empty()
 
 		const infoList = $(create("div"))
-			.css("flex-direction", "column")
+			.css("flex-direction", "row")
+			.css("display", "flex")
+			.css("padding-left", "12px")
 
 		$(infoList)
 			.append(
 				$(create("h4"))
-					.text("Ciao")
+					.text("Username: ")
+					.css("color", "#ffffff")
 			)
+			.append(
+				$(create("h4"))
+					.text(user.username)
+					.css("padding-left", "4px")
+					.css("color", "#ffffff")
+			)
+			
+		$(content).append(infoList)
 
+		api.getEventsForUser({
+			user_id: user.id,
+			onSuccess: (events) => {
+
+				if (!events) return;
+
+				$(content).append(
+					$(create("div"))
+						.css("flex-direction", "row")
+						.css("display", "flex")
+						.css("padding-left", "12px")
+						.append(
+							$(create("h4"))
+								.text("Sign in date: ")
+								.css("color", "#ffffff")
+						)
+						.append(
+							$(create("h4"))
+								.text(new Date(events[0].date).toLocaleString())
+								.css("padding-left", "4px")
+								.css("color", "#ffffff")
+						)
+				)
+			},
+			onError: () => {
+				ui.showLoginPage();
+			}
+		});
 
 	}
 	
 	view.showEvents = () => {
-			view.setContent(LoadingView())
+	 	view.setContent(LoadingView())
 	
-			api.getEventsForProject({
-				project_id: project.id,
-				onSuccess: (events) => {
+		api.getEventsForUser({
+		 		user_id: user.id,
+		 		onSuccess: (events) => {
 	
 					$(content).empty()
 	
-					if (!events) return;
+		 			if (!events) return;
 	
-					events.forEach(e => {
-						$(content).append(EventView({ e: e }));
-					})
-				},
-				onError: () => {
-					ui.showLoginPage();
-				}
-			});
-		}
+		 			events.forEach(e => {
+		 				$(content).append(EventView({ e: e }));
+		 			})
+		 		},
+		 		onError: () => {
+		 			ui.showLoginPage();
+		 		}
+		 	});
+		
+	}
+
+	view.showOther = () => {
+
+		$(content).empty()
+
+
+	}
 
 	return view;
 	
@@ -1524,13 +1624,28 @@ const EventView = ({ e }) => {
 
 	const description = $(create("h3"))
 
+	const username = $(create("span"))
+
 	$(description)
 		.append("User ")
 		.append(
-			$(create("span"))
-				.text("#" + e.user_id)
+			$(username)
+				//.text("#" + e.user_id)
 
 		)
+
+	
+
+	api.getUser({
+		id: e.user_id,
+		onSuccess: (user) => {
+			$(username).text(user.username);
+		},
+		onError: () => {
+
+		}
+	})
+
 
 	if (e.action === "") {
 		$(description)
@@ -1543,41 +1658,56 @@ const EventView = ({ e }) => {
 		$(description)
 			.append(" signed in")
 	} else if (e.action === "created project") {
+
 		$(description)
 			.append(" created Project ")
 			.append(
 				$(create("span"))
-					.text("#" + e.info.project_id)
+					.text(e.info.project_title)
 			)
-			.append(" with title: " + e.info.project_title)
+			//.append(" with title: " + e.info.project_title)
 
 	} else if (e.action === "added record to project") {
+		const projectName = $(create("span"))
+		
 		$(description)
 			.append(" added Record ")
 			.append(
 				$(create("span"))
-					.text("#" + e.info.record_id)
+					.text("#" + e.info.record_id + " " + e.info.input)
 			)
 			.append(" to Project ")
 			.append(
-				$(create("span"))
-					.text("#" + e.info.project_id)
+				$(projectName)
+					//.text("#" + e.info.project_id)
 			)
+
+			api.getProject({
+				id: e.info.project_id,
+				onSuccess: (project) => {
+
+					$(projectName).text(project.title);
+				},
+				onError: () => {
+	
+				}
+			})
 	} else if (e.action === "deleted project") {
 		$(description)
 			.append(" deleted Project ")
 			.append(
 				$(create("span"))
-					.text("#" + e.info.project_id)
+					.text(e.info.title)
 			)
 	} else if (e.action === "deleted record") {
 		$(description)
 			.append(" deleted Record ")
 			.append(
 				$(create("span"))
-					.text("#" + e.info.record_id)
+					.text("#" + e.info.record_id + " " + e.info.input)
 			)
 	} else if (e.action === "added tag to project") {
+		const projectName = $(create("span"))
 		$(description)
 			.append(" added Tag ")
 			.append(
@@ -1586,10 +1716,21 @@ const EventView = ({ e }) => {
 			)
 			.append(" to Project ")
 			.append(
-				$(create("span"))
-					.text("#" + e.info.project_id)
+				$(projectName)
+					//.text("#" + e.info.project_id)
 			)
+
+			api.getProject({
+				id: e.info.project_id,
+				onSuccess: (project) => {
+					$(projectName).text(project.title);
+				},
+				onError: () => {
+	
+				}
+			})
 	} else if (e.action === "added value to project") {
+		const projectName = $(create("span"))
 		$(description)
 			.append(" added Tag Value ")
 			.append(
@@ -1603,10 +1744,21 @@ const EventView = ({ e }) => {
 			)
 			.append(" to Project ")
 			.append(
-				$(create("span"))
-					.text("#" + e.info.project_id)
+				$(projectName)
+					//.text("#" + e.info.project_id)
 			)
+
+			api.getProject({
+				id: e.info.project_id,
+				onSuccess: (project) => {
+					$(projectName).text(project.title);
+				},
+				onError: () => {
+	
+				}
+			})
 	} else if (e.action === "removed tag from project") {
+		const projectName = $(create("span"))
 		$(description)
 			.append(" removed Tag ")
 			.append(
@@ -1615,10 +1767,21 @@ const EventView = ({ e }) => {
 			)
 			.append(" from Project ")
 			.append(
-				$(create("span"))
-					.text("#" + e.info.project_id)
+				$(projectName)
+					//.text("#" + e.info.project_id)
 			)
+
+			api.getProject({
+				id: e.info.project_id,
+				onSuccess: (project) => {
+					$(projectName).text(project.title);
+				},
+				onError: () => {
+	
+				}
+			})
 	} else if (e.action === "removed tag value from project") {
+		const projectName = $(create("span"))
 		$(description)
 			.append(" removed Tag Value ")
 			.append(
@@ -1632,10 +1795,22 @@ const EventView = ({ e }) => {
 			)
 			.append(" from Project ")
 			.append(
-				$(create("span"))
-					.text("#" + e.info.project_id)
-			)
+				$(projectName)
+				//.text("#" + e.info.project_id)
+		)
+
+		api.getProject({
+			id: e.info.project_id,
+			onSuccess: (project) => {
+				$(projectName).text(project.title);
+			},
+			onError: () => {
+
+			}
+		})
 	} else if (e.action === "set tag to record") {
+		const recordName = $(create("span"))
+
 		$(description)
 			.append(" set Tag ")
 			.append(
@@ -1649,10 +1824,21 @@ const EventView = ({ e }) => {
 			)
 			.append(" to Record ")
 			.append(
-				$(create("span"))
-					.text("#" + e.info.record_id)
-			)
+				$(recordName)
+				//.text("#" + e.info.record_id)
+		)
+
+		api.getRecord({
+			id: e.info.record_id,
+			onSuccess: (record) => {
+				$(recordName).text("#" + e.info.record_id + " " + record.input);
+			},
+			onError: () => {
+
+			}
+		})
 	} else if (e.action === "removed tag from record") {
+		const recordName = $(create("span"))
 		$(description)
 			.append(" removed ")
 			.append(
@@ -1661,16 +1847,37 @@ const EventView = ({ e }) => {
 			)
 			.append(" from Record ")
 			.append(
-				$(create("span"))
-					.text("#" + e.info.record_id)
-			)
-	} else if (e.action === " modified input of record") {
+				$(recordName)
+				//.text("#" + e.info.record_id)
+		)
+
+		api.getRecord({
+			id: e.info.record_id,
+			onSuccess: (record) => {
+				$(recordName).text("#" + e.info.record_id + " " + record.input);
+			},
+			onError: () => {
+
+			}
+		})
+	} else if (e.action === "modified input of record") {
+		const recordName = $(create("span"))
 		$(description)
 			.append(" modified Input for Record ")
 			.append(
-				$(create("span"))
-					.text("#" + e.info.record_id)
-			)
+				$(recordName)
+				//.text("#" + e.info.record_id)
+		)
+
+		api.getRecord({
+			id: e.info.record_id,
+			onSuccess: (record) => {
+				$(recordName).text("#" + e.info.record_id + " " + record.input);
+			},
+			onError: () => {
+
+			}
+		})
 	}
 
 	$(view).append(description)
