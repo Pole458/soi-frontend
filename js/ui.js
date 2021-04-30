@@ -433,11 +433,11 @@ const MainPage = () => {
 		view.setContent(
 			RecordView({
 				record: record,
-				projectTags: view.selectedProject.tags,
+				project: view.selectedProject,
 				onRemoveRecord: () => {
 					view.showProjects()
 				},
-				onTagToRecord: (record) => {
+				onRecordUpdate: (record) => {
 					view.showRecord(record)
 				}
 			})
@@ -503,7 +503,6 @@ const TopBar = ({ onClickHome, onClickProject, onClickName }) => {
 		$(recordPathView).attr("hidden", true)
 	}
 
-
 	$(view)
 		.attr("class", "app-bar")
 		.append(
@@ -558,7 +557,6 @@ const TopBar = ({ onClickHome, onClickProject, onClickName }) => {
 
 
 						})
-
 				)
 				.append(
 					$(create("button"))
@@ -756,6 +754,10 @@ const ProjectListView = ({ project, onClick }) => {
 
 const ProjectView = ({ project, onRecordClick, onRemoveProject, refreshPage }) => {
 
+	const state = {
+		tabSelected: "Records"
+	}
+
 	const view = $(create("div"))
 		.css("display", "flex")
 		.css("flex-direction", "column")
@@ -764,8 +766,6 @@ const ProjectView = ({ project, onRecordClick, onRemoveProject, refreshPage }) =
 
 	const content = $(create("div"))
 		.attr("class", "tabcontent")
-		// .css("display", "flex")
-		// .css("flex-direction", "column")
 		.css("flex", "1")
 		.css("overflow-y", "auto")
 
@@ -780,51 +780,27 @@ const ProjectView = ({ project, onRecordClick, onRemoveProject, refreshPage }) =
 		.css("background-color", "#ffa31a")
 		.css("color", "rgb(0, 0, 0.9)")
 		.click(ev => {
-			$(tagsTabButton)
-				.css("background-color", "#ffa31a")
-				.css("color", "rgb(0, 0, 0.9)")
-			$(recordsTabButton)
-				.css("background-color", "#1b1b1b")
-				.css("color", "#ffffff")
-			$(eventsTabButton)
-				.css("background-color", "#1b1b1b")
-				.css("color", "#ffffff")
-
-			view.showTags()
+			view.setState({
+				tabSelected: "Tags"
+			})
 		})
 
 	const recordsTabButton = $(create("button"))
 		.text("Records")
 		.attr("class", "tablink")
 		.click(ev => {
-			$(recordsTabButton)
-				.css("background-color", "#ffa31a")
-				.css("color", "rgb(0, 0, 0.9)")
-			$(tagsTabButton)
-				.css("background-color", "#1b1b1b")
-				.css("color", "#ffffff")
-			$(eventsTabButton)
-				.css("background-color", "#1b1b1b")
-				.css("color", "#ffffff")
-
-			view.showRecords();
+			view.setState({
+				tabSelected: "Records"
+			})
 		})
 
 	const eventsTabButton = $(create("button"))
 		.text("Events")
 		.attr("class", "tablink")
 		.click(ev => {
-			$(eventsTabButton)
-				.css("background-color", "#ffa31a")
-				.css("color", "rgb(0, 0, 0.9)")
-			$(tagsTabButton)
-				.css("background-color", "#1b1b1b")
-				.css("color", "#ffffff")
-			$(recordsTabButton)
-				.css("background-color", "#1b1b1b")
-				.css("color", "#ffffff")
-
-			view.showEvents();
+			view.setState({
+				tabSelected: "Events"
+			})
 		})
 
 	$(view)
@@ -872,20 +848,24 @@ const ProjectView = ({ project, onRecordClick, onRemoveProject, refreshPage }) =
 				.append(
 					$(create("div"))
 						.attr("class", "tabs")
-						.append(
-							tagsTabButton
-						)
-						.append(
-							recordsTabButton
-						)
-						.append(
-							eventsTabButton
-						)
+						.append(tagsTabButton)
+						.append(recordsTabButton)
+						.append(eventsTabButton)
 				)
 				.append(content)
 		)
 
 	view.showTags = () => {
+
+		$(tagsTabButton)
+			.css("background-color", "#ffa31a")
+			.css("color", "rgb(0, 0, 0.9)")
+		$(recordsTabButton)
+			.css("background-color", "#1b1b1b")
+			.css("color", "#ffffff")
+		$(eventsTabButton)
+			.css("background-color", "#1b1b1b")
+			.css("color", "#ffffff")
 
 		$(content).empty()
 
@@ -901,7 +881,6 @@ const ProjectView = ({ project, onRecordClick, onRemoveProject, refreshPage }) =
 						.css("background-color", "#1b1b1b")
 						.css("border", "1px solid #ffffff")
 
-
 					const modal = ModalView({
 						content: $(create("div"))
 							.append(
@@ -909,9 +888,7 @@ const ProjectView = ({ project, onRecordClick, onRemoveProject, refreshPage }) =
 									.text("Insert new tag name:")
 									.css("color", "#ffffff")
 							)
-							.append(
-								taginput
-							),
+							.append(taginput),
 						onConfirm: () => {
 							const tag_name = $(taginput).val()
 
@@ -1002,7 +979,6 @@ const ProjectView = ({ project, onRecordClick, onRemoveProject, refreshPage }) =
 										tag_value: value,
 										onSuccess: () => {
 											refreshPage(project.id)
-
 										},
 										onError: () => {
 										}
@@ -1074,6 +1050,17 @@ const ProjectView = ({ project, onRecordClick, onRemoveProject, refreshPage }) =
 	}
 
 	view.showRecords = () => {
+
+		$(recordsTabButton)
+			.css("background-color", "#ffa31a")
+			.css("color", "rgb(0, 0, 0.9)")
+		$(tagsTabButton)
+			.css("background-color", "#1b1b1b")
+			.css("color", "#ffffff")
+		$(eventsTabButton)
+			.css("background-color", "#1b1b1b")
+			.css("color", "#ffffff")
+
 		view.setContent(LoadingView())
 
 		api.getRecords({
@@ -1232,6 +1219,17 @@ const ProjectView = ({ project, onRecordClick, onRemoveProject, refreshPage }) =
 	}
 
 	view.showEvents = () => {
+
+		$(eventsTabButton)
+			.css("background-color", "#ffa31a")
+			.css("color", "rgb(0, 0, 0.9)")
+		$(tagsTabButton)
+			.css("background-color", "#1b1b1b")
+			.css("color", "#ffffff")
+		$(recordsTabButton)
+			.css("background-color", "#1b1b1b")
+			.css("color", "#ffffff")
+
 		view.setContent(LoadingView())
 
 		api.getEventsForProject({
@@ -1252,316 +1250,386 @@ const ProjectView = ({ project, onRecordClick, onRemoveProject, refreshPage }) =
 		});
 	}
 
-	view.showTags()
+	view.render = () => {
+		if (state.tabSelected === "Records") {
+			view.showRecords()
+		} else if (state.tabSelected === "Tags") {
+			view.showTags();
+		} else if (state.tabSelected === "Events") {
+			view.showEvents();
+		}
+	}
+
+	view.setState = (newState) => {
+		Object.keys(newState).forEach(key => {
+			state[key] = newState[key]
+		})
+		view.render();
+	}
+
+	view.render();
 
 	return view;
 }
 
-const RecordView = ({ record, projectTags, onRemoveRecord, onTagToRecord }) => {
+const RecordView = ({ record, project, onRemoveRecord, onRecordUpdate }) => {
 
 	const view = $(create("div"))
 		.css("display", "flex")
 		.css("flex-direction", "column")
 		.css("overflow-y", "hidden")
 
-	const input = create("div");
-	$(input)
-		.css("flex-direction", "row")
-		.append(
-			$(create("button"))
-				.attr("class", "modify-input-button")
-				.append(
-					$(create("i"))
-						.attr("class", "eos-icons")
-						.text("mode_edit")
-				)
-				.click(ev => {
-					const modal = ModalView({
+	view.render = () => {
+		view.empty();
+
+		const input = create("div");
+		$(input)
+			.css("flex-direction", "row")
+			.append(
+				$(create("button"))
+					.attr("class", "modify-input-button")
+					.append(
+						$(create("i"))
+							.attr("class", "eos-icons")
+							.text("mode_edit")
+					)
+					.click(ev => {
+
+						let Image = null;
+						let Text = null;
+
+						let recordInput;
+
+						if (project.recordType === "Image") {
+
+							const img = $(create("img"))
+								.attr("class", "record-image")
+								.click(e => {
+									$(fileInput).trigger("click");
+								})
+								.on("error", e => { Image = null; })
+
+							const previewReader = new FileReader();
+							previewReader.onload = e => {
+								$(img).attr("src", e.target.result);
+							}
+
+							const fileInput = $(create("input"))
+								.attr("type", "file")
+								.css("display", "none")
+								.attr("accept", "image/*")
+								.on("change", e => {
+									const file = e.target.files[0];
+									Image = file;
+									previewReader.readAsDataURL(file);
+									$(fileInput).val("")
+								})
+
+							recordInput = $(create("div"))
+								.css("display", "flex")
+								.css("flex-direction", "column")
+								.append(img)
+								.append(fileInput)
+						} else {
+							recordInput = $(create("input"))
+								.attr("class", "new-record-input")
+								.attr("type", "text")
+								.attr("placeholder", "Insert record input...")
+								.css("color", " #ffffff")
+								.css("background-color", "#1b1b1b")
+								.css("border", "1px solid #ffffff")
+								.attr("value", record.input)
+								.on("change", e => {
+									Text = $(e.target).val();
+								})
+						}
+
+						const modal = ModalView({
+							content: $(create("div"))
+								.append(
+									$(create("h4"))
+										.text("Modify input:")
+										.css("color", "#ffffff")
+								)
+								.append(recordInput),
+							onConfirm: () => {
+
+								if (!Text && !Image) {
+									modal.showErrorMessage("Please insert valid input")
+									return;
+								}
+
+								modal.disable();
+
+								api.updateInputRecord({
+									record_id: record.id,
+									Text: Text,
+									Image: Image,
+									onSuccess: (record2) => {
+										modal.hide();
+										onRecordUpdate(record2)
+									},
+									onError: (errorMessage) => {
+										modal.showErrorMessage(errorMessage)
+										modal.enable()
+									}
+								})
+							}
+						})
+					})
+			)
+			.append(project.recordType === "Image" ?
+				$(create("img"))
+					.attr("class", "record-image")
+					.attr("src", "api/images/" + record.input)
+				:
+				$(create("h1"))
+					.attr("id", "record-view-input")
+					.text(record.input)
+					.css("padding-left", "20px")
+					.css("color", "#f90")
+					.css("display", "inline-block")
+			)
+			.append(
+				$(create("button"))
+					.attr("class", "remove-record-button")
+					.text("Remove record")
+					.append(
+						$(create("i"))
+							.attr("class", "eos-icons")
+							.css("margin-left", "8px")
+							.text("remove_circle")
+					)
+					.click(ev => {
+						api.removeRecord({
+							record_id: record.id,
+							onSuccess: () => {
+								onRemoveRecord();
+							},
+							onError: () => {
+
+							}
+						})
+					})
+			)
+
+		$(view).append(input)
+
+		$(view).append(
+			$(create("h2"))
+				.text("Tags")
+				.css("color", "#f90")
+				.css("padding-left", "20px")
+		)
+
+		const tagsList = $(create("div"))
+			.css("display", "flex")
+			.css("flex-grow", "1")
+			.css("min-height", "128px")
+			.css("flex-direction", "column")
+			.css("overflow-y", "auto")
+			.css("background-color", "#333")
+			.css("border-radius", "8px")
+			.css("margin", "16px")
+
+		if (record.tags) {
+			record.tags.forEach(tag => {
+				const tagView = create("div")
+
+				const select = $(create("select"))
+					.attr("class", "select-tag-value-record")
+					.change(function () {
+						const name = tag.name
+						const value = $(select).val()
+						api.setTagToRecord({
+							record_id: record.id,
+							tag_name: name,
+							tag_value: value,
+							onSuccess: () => { },
+							onError: () => { }
+						})
+					})
+				for (const projectTag of project.tags) {
+					if (projectTag.name == tag.name) {
+						for (const value of projectTag.values) {
+							const option = $(create("option"))
+								.attr("value", value)
+								.css("color", "rgb(0, 0, 0.9)")
+								.text(value)
+
+							if (value === tag.value)
+								$(option).attr("selected", "selected")
+
+							$(select).append(option)
+						}
+						break;
+					}
+				}
+
+				$(tagView)
+					.attr("class", "tag-record")
+					.text(tag.name + ": ")
+					.append(select)
+					.append(
+						$(create("button"))
+							.attr("class", "remove-tags-records")
+							.append(icon("remove_circle"))
+							.click(ev => {
+								api.removeTagFromRecord({
+									record_id: record.id,
+									tag_name: tag.name,
+									onSuccess: () => {
+										api.getRecord({
+											id: record.id,
+											onSuccess: (record2) => {
+												onRecordUpdate(record2)
+											},
+											onError: () => {
+											}
+										})
+
+									},
+									onError: () => {
+									}
+
+								})
+							})
+					)
+
+				$(tagsList).append(tagView);
+			})
+		}
+
+		$(view).append(tagsList)
+
+		$(view).append(
+			Fab({
+				onClick: () => {
+
+					const tagNameselect = $(create("select"))
+
+					for (const projectTag of project.tags) {
+						$(tagNameselect)
+							.attr("class", "new-record-tag-selector")
+							.append(
+								$(create("option"))
+									.attr("value", projectTag.name)
+									.text(projectTag.name)
+									.css("color", "rgb(0, 0, 0.9)")
+							)
+					}
+
+					const tagValueSelect = $(create("select"))
+
+					$(tagValueSelect).attr("class", "new-record-tag-value-selector")
+
+					$(tagNameselect).change(() => {
+
+						$(tagValueSelect).empty()
+
+						const tagName = $(tagNameselect).val()
+
+						for (const projectTag of project.tags) {
+							if (projectTag.name == tagName) {
+								for (const value of projectTag.values) {
+									$(tagValueSelect).append(
+										$(create("option"))
+											.attr("value", value)
+											.text(value)
+											.css("color", "rgb(0, 0, 0.9)")
+									)
+								}
+								break;
+							}
+						}
+					})
+
+					$(tagNameselect).trigger("change")
+
+					const modal2 = ModalView({
 						content: $(create("div"))
 							.append(
 								$(create("h4"))
-									.text("Modify input:")
+									.text("Insert tag name and value:")
 									.css("color", "#ffffff")
 							)
-							.append(
-								$(create("input"))
-									.attr("class", "input-modifier")
-									.attr("id", "record-input-modifier")
-									.attr("type", "text")
-									.attr("name", "record-input-mod")
-									.attr("value", record.input)
-							),
+							.append(tagNameselect)
+							.append(tagValueSelect)
+						,
 						onConfirm: () => {
-							const input = $("#record-input-modifier").val()
+							const name = $(tagNameselect).val()
+							const value = $(tagValueSelect).val()
 
-							if (!input) {
-								modal.showErrorMessage("Please insert valid input")
+							if (!value || !name) {
+								modal2.showErrorMessage("Please select name and value")
 								return;
 							}
 
-							modal.disable()
+							modal2.disable()
 
-							api.modifyInputRecord({
+							api.setTagToRecord({
 								record_id: record.id,
-								input: input,
+								tag_name: name,
+								tag_value: value,
 								onSuccess: () => {
-									$("#record-view-input").text(input);
-									modal.hide()
-								},
-								onError: (errorMessage) => {
-									modal.showErrorMessage(errorMessage)
-									modal.enable()
-								}
-							})
-						}
-					})
-				})
-		)
-		.append(
-			$(create("h1"))
-				.attr("id", "record-view-input")
-				.text(record.input)
-				.css("padding-left", "20px")
-				.css("color", "#f90")
-				.css("display", "inline-block")
-		)
-		.append(
-			$(create("button"))
-				.attr("class", "remove-record-button")
-				.text("Remove record")
-				.append(
-					$(create("i"))
-						.attr("class", "eos-icons")
-						.css("margin-left", "8px")
-						.text("remove_circle")
-				)
-				.click(ev => {
-					api.removeRecord({
-						record_id: record.id,
-						onSuccess: () => {
-							onRemoveRecord();
-						},
-						onError: () => {
-
-						}
-					})
-				})
-		)
-
-	$(view).append(input)
-
-	$(view).append(
-		$(create("h2"))
-			.text("Tags")
-			.css("color", "#f90")
-			.css("padding-left", "20px")
-	)
-
-	const tagsList = $(create("div"))
-		.css("display", "flex")
-		.css("flex-grow", "1")
-		.css("min-height", "128px")
-		.css("flex-direction", "column")
-		.css("overflow-y", "auto")
-		.css("background-color", "#333")
-		.css("border-radius", "8px")
-		.css("margin", "16px")
-
-	if (record.tags) {
-		record.tags.forEach(tag => {
-			const tagView = create("div")
-
-			const select = $(create("select"))
-				.attr("class", "select-tag-value-record")
-				.change(function () {
-					const name = tag.name
-					const value = $(select).val()
-					api.setTagToRecord({
-						record_id: record.id,
-						tag_name: name,
-						tag_value: value,
-						onSuccess: () => { },
-						onError: () => { }
-					})
-				})
-			for (const projectTag of projectTags) {
-				if (projectTag.name == tag.name) {
-					for (const value of projectTag.values) {
-						const option = $(create("option"))
-							.attr("value", value)
-							.css("color", "rgb(0, 0, 0.9)")
-							.text(value)
-
-						if (value === tag.value)
-							$(option).attr("selected", "selected")
-
-						$(select).append(option)
-					}
-					break;
-				}
-			}
-
-			$(tagView)
-				.attr("class", "tag-record")
-				.text(tag.name + ": ")
-				.append(select)
-				.append(
-					$(create("button"))
-						.attr("class", "remove-tags-records")
-						.append(icon("remove_circle"))
-						.click(ev => {
-							api.removeTagFromRecord({
-								record_id: record.id,
-								tag_name: tag.name,
-								onSuccess: () => {
+									modal2.hide()
 									api.getRecord({
 										id: record.id,
 										onSuccess: (record2) => {
-											onTagToRecord(record2)
+											onRecordUpdate(record2)
 										},
 										onError: () => {
 										}
 									})
 
 								},
-								onError: () => {
+								onError: (errorMessage) => {
+									modal2.showErrorMessage(errorMessage)
+									modal2.enable()
 								}
-
 							})
-						})
-				)
+						}
+					})
+				}
+			})
+		)
 
-			$(tagsList).append(tagView);
+		const eventsList = $(create("div"))
+			.css("display", "flex")
+			.css("flex-grow", "1")
+			.css("min-height", "128px")
+			.css("flex-direction", "column")
+			.css("overflow-y", "auto")
+			.css("background-color", "#333")
+			.css("border-radius", "8px")
+			.css("margin", "16px")
+
+
+		$(view).append(
+			$(create("h2"))
+				.text("Events")
+				.css("color", "#f90")
+				.css("padding-left", "20px")
+		)
+
+		$(view).append(eventsList)
+
+		api.getEventsForRecord({
+			record_id: record.id,
+			onSuccess: (events) => {
+				$(eventsList).empty()
+
+				if (!events) return;
+
+				events.forEach(e => {
+					$(eventsList).append(EventView({ e: e }))
+				});
+			},
+			onError: () => { }
 		})
 	}
 
-	$(view).append(tagsList)
-
-	$(view).append(
-		Fab({
-			onClick: () => {
-
-				const tagNameselect = $(create("select"))
-
-				for (const projectTag of projectTags) {
-					$(tagNameselect)
-						.attr("class", "new-record-tag-selector")
-						.append(
-							$(create("option"))
-								.attr("value", projectTag.name)
-								.text(projectTag.name)
-								.css("color", "rgb(0, 0, 0.9)")
-						)
-				}
-
-				const tagValueSelect = $(create("select"))
-
-				$(tagValueSelect).attr("class", "new-record-tag-value-selector")
-
-				$(tagNameselect).change(() => {
-
-					$(tagValueSelect).empty()
-
-					const tagName = $(tagNameselect).val()
-
-					for (const projectTag of projectTags) {
-						if (projectTag.name == tagName) {
-							for (const value of projectTag.values) {
-								$(tagValueSelect).append(
-									$(create("option"))
-										.attr("value", value)
-										.text(value)
-										.css("color", "rgb(0, 0, 0.9)")
-								)
-							}
-							break;
-						}
-					}
-				})
-
-				$(tagNameselect).trigger("change")
-
-				const modal2 = ModalView({
-					content: $(create("div"))
-						.append(
-							$(create("h4"))
-								.text("Insert tag name and value:")
-								.css("color", "#ffffff")
-						)
-						.append(tagNameselect)
-						.append(tagValueSelect)
-					,
-					onConfirm: () => {
-						const name = $(tagNameselect).val()
-						const value = $(tagValueSelect).val()
-
-						if (!value || !name) {
-							modal2.showErrorMessage("Please select name and value")
-							return;
-						}
-
-						modal2.disable()
-
-						api.setTagToRecord({
-							record_id: record.id,
-							tag_name: name,
-							tag_value: value,
-							onSuccess: () => {
-								modal2.hide()
-								api.getRecord({
-									id: record.id,
-									onSuccess: (record2) => {
-										onTagToRecord(record2)
-									},
-									onError: () => {
-									}
-								})
-
-							},
-							onError: (errorMessage) => {
-								modal2.showErrorMessage(errorMessage)
-								modal2.enable()
-							}
-						})
-					}
-				})
-			}
-		})
-	)
-
-	const eventsList = $(create("div"))
-		.css("display", "flex")
-		.css("flex-grow", "1")
-		.css("min-height", "128px")
-		.css("flex-direction", "column")
-		.css("overflow-y", "auto")
-		.css("background-color", "#333")
-		.css("border-radius", "8px")
-		.css("margin", "16px")
-
-
-	$(view).append(
-		$(create("h2"))
-			.text("Events")
-			.css("color", "#f90")
-			.css("padding-left", "20px")
-	)
-
-	$(view).append(eventsList)
-
-	api.getEventsForRecord({
-		record_id: record.id,
-		onSuccess: (events) => {
-			$(eventsList).empty()
-
-			if (!events) return;
-
-			events.forEach(e => {
-				$(eventsList).append(EventView({ e: e }))
-			});
-		},
-		onError: () => { }
-	})
+	view.render();
 
 	return view
 }

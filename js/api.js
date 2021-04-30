@@ -311,16 +311,45 @@ api.removeTagFromRecord = ({ record_id, tag_name, onSuccess, onError }) => {
 	})
 }
 
-api.modifyInputRecord = ({ record_id, input, onSuccess, onError }) => {
+api.updateInputRecord = ({ record_id, Text, Image, onSuccess, onError }) => {
+
+	const formData = new FormData();
+	formData.append("Text", Text);
+	formData.append("Image", Image);
+
 	$.ajax({
 		method: "post",
-		url: "api/modify-record",
-		data: { 'record_id': record_id, 'input': input },
+		url: "api/record/" + record_id + "/update",
+		processData: false,
+		contentType: false,
+		data: formData,
 		success: function (data, textStatus) {
-			onSuccess();
+			onSuccess(data);
 		},
 		error: function (jqXHR, textStatus, errorThrown) {
-			onError();
+			onError(jqXHR.error);
 		}
 	})
 }
+
+/**
+ *
+ * const formData = new FormData();
+	formData.append("Text", Text);
+	formData.append("Image", Image);
+
+	$.ajax({
+		method: "post",
+		url: "api/project/" + project_id + "/record",
+		processData: false,
+		contentType: false,
+		data: formData,
+		success: function (data, textStatus) {
+			const record = data;
+			onSuccess(record);
+		},
+		error: function (jqXHR, textStatus, errorThrown) {
+			onError(jqXHR.responseJSON.error)
+		}
+	})
+ */
