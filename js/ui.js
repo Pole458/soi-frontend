@@ -33,6 +33,24 @@ const LoadingView = () => {
 		.append($(create("div")).css("flex", "1"))
 }
 
+const ImageView = ({ src, width, height }) => {
+
+	const view = $(create("img"))
+		.css("height", height)
+		.css("width", width)
+		.css("object-fit", "contain")
+		.css("background-color", "#333")
+		.css("border-radius", "8px")
+
+	view.setSrc = (src) => {
+		$(view).attr("src", src)
+	}
+
+	if (src) view.setSrc(src)
+
+	return view;
+}
+
 const Fab = ({ onClick }) => {
 	return $(create("div"))
 		.attr("class", "fab")
@@ -1001,8 +1019,12 @@ const ProjectView = ({ project_id, onRecordClick, onRemoveProject, onProjectLoad
 
 							if (state.project.recordType === "Image") {
 
-								const img = $(create("img"))
-									.attr("class", "record-image")
+								const img = ImageView({
+									height: "256px",
+									width: "256px"
+								})
+
+								$(img)
 									.click(e => {
 										$(fileInput).trigger("click");
 									})
@@ -1010,7 +1032,7 @@ const ProjectView = ({ project_id, onRecordClick, onRemoveProject, onProjectLoad
 
 								const previewReader = new FileReader();
 								previewReader.onload = e => {
-									$(img).attr("src", e.target.result);
+									img.setSrc(e.target.result)
 								}
 
 								const fileInput = $(create("input"))
@@ -1087,25 +1109,24 @@ const ProjectView = ({ project_id, onRecordClick, onRemoveProject, onProjectLoad
 
 				records.forEach(record => {
 
-					const recordView = create("div")
-
 					let inputView;
 
 					if (state.project.recordType === "Image") {
-						inputView = $(create("img"))
-							.css("height", "64px")
-							.css("width", "64px")
-							.attr("src", "api/images/" + record.input)
+						inputView = ImageView({
+							src: "api/images/" + record.input,
+							width: "64px",
+							height: "64px"
+						})
 					} else {
 						inputView = $(create("h3"))
 							.text(record.input)
 					}
 
-					$(recordView)
+					const recordView = $(create("div"))
 						.attr("class", "records-list")
 						.css("flex-direction", "row")
-						.css("display", "block")
-						.css("overflow-y", "hidden")
+						.css("display", "flex")
+						.css("padding", "8px")
 						.append(inputView)
 						.click(ev => {
 							onRecordClick(record)
@@ -1114,6 +1135,8 @@ const ProjectView = ({ project_id, onRecordClick, onRemoveProject, onProjectLoad
 					const tagList = create("div")
 					$(tagList)
 						.css("display", "flex")
+						.css("flex-direction", "row")
+						.css("flex-wrap", "wrap")
 
 					if (record.tags) {
 
@@ -1295,9 +1318,25 @@ const RecordView = ({ record, project, onRemoveRecord, onRecordUpdate }) => {
 	view.render = () => {
 		view.empty();
 
-		const input = create("div");
-		$(input)
+		const input = $(create("div"))
+			.css("display", "flex")
 			.css("flex-direction", "row")
+			.css("align-items", "center")
+			.css("margin", "16px")
+			.append(project.recordType === "Image" ?
+				ImageView({
+					src: "api/images/" + record.input,
+					height: "128px",
+					width: "128px"
+				})
+				:
+				$(create("h1"))
+					.attr("id", "record-view-input")
+					.text(record.input)
+					.css("padding-left", "20px")
+					.css("color", "#f90")
+					.css("display", "inline-block")
+			)
 			.append(
 				$(create("button"))
 					.attr("class", "modify-input-button")
@@ -1315,8 +1354,13 @@ const RecordView = ({ record, project, onRemoveRecord, onRecordUpdate }) => {
 
 						if (project.recordType === "Image") {
 
-							const img = $(create("img"))
-								.attr("class", "record-image")
+							const img = ImageView({
+								src: "api/images/" + record.input,
+								width: "256px",
+								height: "256px"
+							})
+
+							$(img)
 								.click(e => {
 									$(fileInput).trigger("click");
 								})
@@ -1324,7 +1368,7 @@ const RecordView = ({ record, project, onRemoveRecord, onRecordUpdate }) => {
 
 							const previewReader = new FileReader();
 							previewReader.onload = e => {
-								$(img).attr("src", e.target.result);
+								img.setSrc(e.target.result)
 							}
 
 							const fileInput = $(create("input"))
@@ -1391,18 +1435,7 @@ const RecordView = ({ record, project, onRemoveRecord, onRecordUpdate }) => {
 						})
 					})
 			)
-			.append(project.recordType === "Image" ?
-				$(create("img"))
-					.attr("class", "record-image")
-					.attr("src", "api/images/" + record.input)
-				:
-				$(create("h1"))
-					.attr("id", "record-view-input")
-					.text(record.input)
-					.css("padding-left", "20px")
-					.css("color", "#f90")
-					.css("display", "inline-block")
-			)
+			.append($(create("div")).css("flex", "1"))
 			.append(
 				$(create("button"))
 					.attr("class", "remove-record-button")
@@ -1439,17 +1472,116 @@ const RecordView = ({ record, project, onRemoveRecord, onRecordUpdate }) => {
 		$(view).append(input)
 
 		$(view).append(
-			$(create("h2"))
-				.text("Tags")
-				.css("color", "#f90")
-				.css("padding-left", "20px")
+			$(create("div"))
+				.css("display", "flex")
+				.css("flex-direction", "row")
+				.css("align-items", "center")
+				.append(
+					$(create("h2"))
+						.text("Tags")
+						.css("color", "#f90")
+						.css("margin-left", "16px")
+				)
+				.append(
+					$(create("button"))
+						.attr("class", "remove-record-button")
+						.css("margin-left", "16px")
+						.text("+ Add Tag")
+						.click(() => {
+							const tagNameselect = $(create("select"))
+
+							for (const projectTag of project.tags) {
+								$(tagNameselect)
+									.attr("class", "new-record-tag-selector")
+									.append(
+										$(create("option"))
+											.attr("value", projectTag.name)
+											.text(projectTag.name)
+											.css("color", "rgb(0, 0, 0.9)")
+									)
+							}
+
+							const tagValueSelect = $(create("select"))
+
+							$(tagValueSelect).attr("class", "new-record-tag-value-selector")
+
+							$(tagNameselect).change(() => {
+
+								$(tagValueSelect).empty()
+
+								const tagName = $(tagNameselect).val()
+
+								for (const projectTag of project.tags) {
+									if (projectTag.name == tagName) {
+										for (const value of projectTag.values) {
+											$(tagValueSelect).append(
+												$(create("option"))
+													.attr("value", value)
+													.text(value)
+													.css("color", "rgb(0, 0, 0.9)")
+											)
+										}
+										break;
+									}
+								}
+							})
+
+							$(tagNameselect).trigger("change")
+
+							const modal2 = ModalView({
+								content: $(create("div"))
+									.append(
+										$(create("h4"))
+											.text("Insert tag name and value:")
+											.css("color", "#ffffff")
+									)
+									.append(tagNameselect)
+									.append(tagValueSelect)
+								,
+								onConfirm: () => {
+									const name = $(tagNameselect).val()
+									const value = $(tagValueSelect).val()
+
+									if (!value || !name) {
+										modal2.showErrorMessage("Please select name and value")
+										return;
+									}
+
+									modal2.disable()
+
+									api.setTagToRecord({
+										record_id: record.id,
+										tag_name: name,
+										tag_value: value,
+										onSuccess: () => {
+											modal2.hide()
+											api.getRecord({
+												id: record.id,
+												onSuccess: (record2) => {
+													onRecordUpdate(record2)
+												},
+												onError: () => {
+												}
+											})
+
+										},
+										onError: (errorMessage) => {
+											modal2.showErrorMessage(errorMessage)
+											modal2.enable()
+										}
+									})
+								}
+							})
+						})
+				)
 		)
 
 		const tagsList = $(create("div"))
 			.css("display", "flex")
+			.css("flex-direction", "column")
+			// .css("align-items", "stretch")
 			.css("flex-grow", "1")
 			.css("min-height", "128px")
-			.css("flex-direction", "column")
 			.css("overflow-y", "auto")
 			.css("background-color", "#333")
 			.css("border-radius", "8px")
@@ -1457,7 +1589,6 @@ const RecordView = ({ record, project, onRemoveRecord, onRecordUpdate }) => {
 
 		if (record.tags) {
 			record.tags.forEach(tag => {
-				const tagView = create("div")
 
 				const select = $(create("select"))
 					.attr("class", "select-tag-value-record")
@@ -1472,12 +1603,13 @@ const RecordView = ({ record, project, onRemoveRecord, onRecordUpdate }) => {
 							onError: () => { }
 						})
 					})
+
 				for (const projectTag of project.tags) {
 					if (projectTag.name == tag.name) {
 						for (const value of projectTag.values) {
 							const option = $(create("option"))
 								.attr("value", value)
-								.css("color", "rgb(0, 0, 0.9)")
+								.css("min-width", "128px")
 								.text(value)
 
 							if (value === tag.value)
@@ -1489,10 +1621,22 @@ const RecordView = ({ record, project, onRemoveRecord, onRecordUpdate }) => {
 					}
 				}
 
-				$(tagView)
+				const tagView = $(create("div"))
+					.css("display", "flex")
+					.css("flex-direction", "row")
 					.attr("class", "tag-record")
-					.text(tag.name + ": ")
+					.css("align-self", "stretch")
+					.append(
+						$(create("div"))
+							.append(
+								$(create("h3"))
+									.text(tag.name + ": ")
+									.css("min-width", "128px")
+									.css("color", "#ffffff")
+							)
+					)
 					.append(select)
+					.append($(create("div")).css("flex", 1))
 					.append(
 						$(create("button"))
 							.attr("class", "remove-tags-records")
@@ -1525,98 +1669,6 @@ const RecordView = ({ record, project, onRemoveRecord, onRecordUpdate }) => {
 
 		$(view).append(tagsList)
 
-		$(view).append(
-			Fab({
-				onClick: () => {
-
-					const tagNameselect = $(create("select"))
-
-					for (const projectTag of project.tags) {
-						$(tagNameselect)
-							.attr("class", "new-record-tag-selector")
-							.append(
-								$(create("option"))
-									.attr("value", projectTag.name)
-									.text(projectTag.name)
-									.css("color", "rgb(0, 0, 0.9)")
-							)
-					}
-
-					const tagValueSelect = $(create("select"))
-
-					$(tagValueSelect).attr("class", "new-record-tag-value-selector")
-
-					$(tagNameselect).change(() => {
-
-						$(tagValueSelect).empty()
-
-						const tagName = $(tagNameselect).val()
-
-						for (const projectTag of project.tags) {
-							if (projectTag.name == tagName) {
-								for (const value of projectTag.values) {
-									$(tagValueSelect).append(
-										$(create("option"))
-											.attr("value", value)
-											.text(value)
-											.css("color", "rgb(0, 0, 0.9)")
-									)
-								}
-								break;
-							}
-						}
-					})
-
-					$(tagNameselect).trigger("change")
-
-					const modal2 = ModalView({
-						content: $(create("div"))
-							.append(
-								$(create("h4"))
-									.text("Insert tag name and value:")
-									.css("color", "#ffffff")
-							)
-							.append(tagNameselect)
-							.append(tagValueSelect)
-						,
-						onConfirm: () => {
-							const name = $(tagNameselect).val()
-							const value = $(tagValueSelect).val()
-
-							if (!value || !name) {
-								modal2.showErrorMessage("Please select name and value")
-								return;
-							}
-
-							modal2.disable()
-
-							api.setTagToRecord({
-								record_id: record.id,
-								tag_name: name,
-								tag_value: value,
-								onSuccess: () => {
-									modal2.hide()
-									api.getRecord({
-										id: record.id,
-										onSuccess: (record2) => {
-											onRecordUpdate(record2)
-										},
-										onError: () => {
-										}
-									})
-
-								},
-								onError: (errorMessage) => {
-									modal2.showErrorMessage(errorMessage)
-									modal2.enable()
-								}
-							})
-						}
-					})
-				}
-			})
-		)
-
 		const eventsList = $(create("div"))
 			.css("display", "flex")
 			.css("flex-grow", "1")
@@ -1627,12 +1679,11 @@ const RecordView = ({ record, project, onRemoveRecord, onRecordUpdate }) => {
 			.css("border-radius", "8px")
 			.css("margin", "16px")
 
-
 		$(view).append(
 			$(create("h2"))
 				.text("Events")
 				.css("color", "#f90")
-				.css("padding-left", "20px")
+				.css("margin-left", "16px")
 		)
 
 		$(view).append(eventsList)
