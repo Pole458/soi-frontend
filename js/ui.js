@@ -9,7 +9,7 @@ const icon = (name) => {
 }
 
 /**
- * JSON object containing UI helper methods.
+ * JS object containing UI helper methods.
  */
 const ui = {}
 
@@ -291,12 +291,8 @@ const MainPage = () => {
 		.css("display", "flex")
 		.css("flex-direction", "column")
 		.css("overflow-y", "hidden")
-		.append(
-			topBar
-		)
-		.append(
-			content
-		)
+		.append(topBar)
+		.append(content)
 
 	view.showProjects = () => {
 
@@ -305,10 +301,23 @@ const MainPage = () => {
 		api.getProjects({
 			onSuccess: (projects) => {
 
-				$(content).empty()
+				if (!projects) return;
+
+				const listView = $(create("div"))
+					.css("flex", "1")
+					.css("display", "flex")
+					.css("flex-direction", "column")
+					.css("overflow-y", "auto")
+
+				listView.append(
+					$(create("h2"))
+						.text("Projects")
+						.css("color", "#f90")
+						.css("padding-left", "20px")
+				)
 
 				// Add Fab button
-				$(content).append(
+				$(listView).append(
 					Fab({
 						onClick: () => {
 							const titleinput = $(create("input"))
@@ -378,10 +387,8 @@ const MainPage = () => {
 					})
 				)
 
-				if (!projects) return;
-
 				projects.forEach(project => {
-					$(content).append(
+					$(listView).append(
 						ProjectListView({
 							project: project,
 							onClick: (project_id) => {
@@ -389,42 +396,31 @@ const MainPage = () => {
 							}
 						}))
 				})
-			},
-			onError: () => {
 
-			}
+				view.setContent(listView)
+			},
+			onError: () => { }
 		});
 	}
 
-	view.showProjects();
-
 	view.showProject = (project_id) => {
-		view.setContent(LoadingView())
-		api.getProject({
-			id: project_id,
-			onSuccess: (project) => {
-				view.selectedProject = project
-				topBar.hidePathRecord()
-				topBar.showPathProject(project.title)
-				view.setContent(
-					ProjectView({
-						project: project,
-						onRecordClick: (record) => {
-							view.showRecord(record)
-						},
-						onRemoveProject: () => {
-							view.showProjects()
-						},
-						refreshPage: (project_id) => {
-							view.showProject(project_id)
-						}
-					})
-				)
-			},
-			onError: () => {
-
-			}
-		})
+		view.setContent(
+			ProjectView({
+				project_id: project_id,
+				onRecordClick: (record) => {
+					view.showRecord(record)
+				},
+				onRemoveProject: () => {
+					topBar.hidePathProject()
+					view.showProjects()
+				},
+				onProjectLoaded: (project) => {
+					view.selectedProject = project
+					topBar.hidePathRecord()
+					topBar.showPathProject(project.title)
+				}
+			})
+		)
 	}
 
 	view.showRecord = (record) => {
@@ -435,7 +431,7 @@ const MainPage = () => {
 				record: record,
 				project: view.selectedProject,
 				onRemoveRecord: () => {
-					view.showProjects()
+					view.showProject(view.selectedProject.id)
 				},
 				onRecordUpdate: (record) => {
 					view.showRecord(record)
@@ -454,6 +450,8 @@ const MainPage = () => {
 			})
 		)
 	}
+
+	view.showProjects();
 
 	return view;
 }
@@ -752,9 +750,10 @@ const ProjectListView = ({ project, onClick }) => {
 	return view;
 }
 
-const ProjectView = ({ project, onRecordClick, onRemoveProject, refreshPage }) => {
+const ProjectView = ({ project_id, onRecordClick, onRemoveProject, onProjectLoaded }) => {
 
 	const state = {
+		project: null,
 		tabSelected: "Records"
 	}
 
@@ -774,96 +773,29 @@ const ProjectView = ({ project, onRecordClick, onRemoveProject, refreshPage }) =
 		$(content).append(v)
 	}
 
-	const tagsTabButton = $(create("button"))
-		.text("Tags")
-		.attr("class", "tablink")
-		.css("background-color", "#ffa31a")
-		.css("color", "rgb(0, 0, 0.9)")
-		.click(ev => {
-			view.setState({
-				tabSelected: "Tags"
-			})
+	view.reload = () => {
+		view.setContent(LoadingView())
+		api.getProject({
+			id: project_id,
+			onSuccess: (project) => {
+				onProjectLoaded(project)
+				view.setState({
+					project: project
+				})
+			},
+			onError: () => { }
 		})
-
-	const recordsTabButton = $(create("button"))
-		.text("Records")
-		.attr("class", "tablink")
-		.click(ev => {
-			view.setState({
-				tabSelected: "Records"
-			})
-		})
-
-	const eventsTabButton = $(create("button"))
-		.text("Events")
-		.attr("class", "tablink")
-		.click(ev => {
-			view.setState({
-				tabSelected: "Events"
-			})
-		})
-
-	$(view)
-		.append(
-			$(create("div"))
-				.css("flex-dirextion", "row")
-				.append(
-					// Title
-					$(create("h2"))
-						.text(project.title)
-						.css("color", "#f90")
-						.css("padding-left", "20px")
-						.css("display", "inline-block")
-				)
-				.append(
-					$(create("button"))
-						.attr("class", "remove-project-button")
-						.text("Remove project")
-						.append(
-							$(create("i"))
-								.attr("class", "eos-icons")
-								.css("margin-left", "8px")
-								.text("remove_circle")
-						)
-						.click(ev => {
-							api.removeProject({
-								project_id: project.id,
-								onSuccess: () => {
-									onRemoveProject()
-								},
-								onError: () => {
-
-								}
-							})
-						})
-				)
-		)
-		.append(
-			// Tabs
-			$(create("div"))
-				.css("display", "flex")
-				.css("flex-direction", "row")
-				.css("flex", "1")
-				.css("overflow-y", "hidden")
-				.append(
-					$(create("div"))
-						.attr("class", "tabs")
-						.append(tagsTabButton)
-						.append(recordsTabButton)
-						.append(eventsTabButton)
-				)
-				.append(content)
-		)
+	}
 
 	view.showTags = () => {
 
-		$(tagsTabButton)
-			.css("background-color", "#ffa31a")
-			.css("color", "rgb(0, 0, 0.9)")
-		$(recordsTabButton)
+		$(view.recordsTabButton)
 			.css("background-color", "#1b1b1b")
 			.css("color", "#ffffff")
-		$(eventsTabButton)
+		$(view.tagsTabButton)
+			.css("background-color", "#ffa31a")
+			.css("color", "rgb(0, 0, 0.9)")
+		$(view.eventsTabButton)
 			.css("background-color", "#1b1b1b")
 			.css("color", "#ffffff")
 
@@ -899,11 +831,11 @@ const ProjectView = ({ project, onRecordClick, onRemoveProject, refreshPage }) =
 
 							modal.disable()
 							api.addTagToProject({
-								project_id: project.id,
+								project_id: state.project.id,
 								tag_name: tag_name,
 								onSuccess: () => {
 									modal.hide()
-									refreshPage(project.id)
+									view.reload();
 								},
 								onError: (errorMessage) => {
 									modal.showErrorMessage(errorMessage)
@@ -916,9 +848,9 @@ const ProjectView = ({ project, onRecordClick, onRemoveProject, refreshPage }) =
 			})
 		)
 
-		if (!project.tags) return;
+		if (!state.project.tags) return;
 
-		project.tags.forEach(tag => {
+		state.project.tags.forEach(tag => {
 
 			const tagView = create("div")
 
@@ -944,15 +876,10 @@ const ProjectView = ({ project, onRecordClick, onRemoveProject, refreshPage }) =
 								)
 								.click(ev => {
 									api.removeTagFromProject({
-										project_id: project.id,
+										project_id: state.project.id,
 										tag_name: tag.name,
-										onSuccess: () => {
-											refreshPage(project.id)
-
-										},
-										onError: () => {
-										}
-
+										onSuccess: () => { view.reload() },
+										onError: () => { view.reload() }
 									})
 								})
 						)
@@ -964,34 +891,28 @@ const ProjectView = ({ project, onRecordClick, onRemoveProject, refreshPage }) =
 
 			if (tag.values) {
 				tag.values.forEach(value => {
-					const valueView = create("div")
-
-					$(valueView)
-						.attr("class", "project-tags-val")
-						.text(value)
-						.append(
-							$(icon("remove_circle"))
-								.css("margin-left", "10px")
-								.click(ev => {
-									api.removeTagValueFromProject({
-										project_id: project.id,
-										tag_name: tag.name,
-										tag_value: value,
-										onSuccess: () => {
-											refreshPage(project.id)
-										},
-										onError: () => {
-										}
+					$(valuesList).append(
+						$(create("p"))
+							.attr("class", "project-tags-val")
+							.text(value)
+							.append(
+								$(icon("remove_circle"))
+									.css("margin-left", "10px")
+									.click(ev => {
+										api.removeTagValueFromProject({
+											project_id: state.project.id,
+											tag_name: tag.name,
+											tag_value: value,
+											onSuccess: () => { view.reload() },
+											onError: () => { view.reload() }
+										})
 									})
-								})
-						)
-
-					$(valuesList).append(valueView);
+							)
+					)
 				})
 			}
 
-			const addValueView = create("div")
-			$(addValueView)
+			const addValueView = $(create("p"))
 				.attr("class", "project-tags-val")
 				.css("cursor", "pointer")
 				.text("+ Add new value")
@@ -1024,12 +945,12 @@ const ProjectView = ({ project, onRecordClick, onRemoveProject, refreshPage }) =
 
 							modalVal.disable()
 							api.addTagValueToProject({
-								project_id: project.id,
+								project_id: state.project.id,
 								tag_name: tag.name,
 								tag_value: tagValue,
 								onSuccess: () => {
 									modalVal.hide()
-									refreshPage(project.id)
+									view.reload();
 								},
 								onError: (errorMessage) => {
 									modalVal.showErrorMessage(errorMessage)
@@ -1051,20 +972,20 @@ const ProjectView = ({ project, onRecordClick, onRemoveProject, refreshPage }) =
 
 	view.showRecords = () => {
 
-		$(recordsTabButton)
+		$(view.recordsTabButton)
 			.css("background-color", "#ffa31a")
 			.css("color", "rgb(0, 0, 0.9)")
-		$(tagsTabButton)
+		$(view.tagsTabButton)
 			.css("background-color", "#1b1b1b")
 			.css("color", "#ffffff")
-		$(eventsTabButton)
+		$(view.eventsTabButton)
 			.css("background-color", "#1b1b1b")
 			.css("color", "#ffffff")
 
 		view.setContent(LoadingView())
 
 		api.getRecords({
-			id: project.id,
+			id: state.project.id,
 			onSuccess: (records) => {
 
 				$(content).empty()
@@ -1078,7 +999,7 @@ const ProjectView = ({ project, onRecordClick, onRemoveProject, refreshPage }) =
 
 							let recordInput;
 
-							if (project.recordType === "Image") {
+							if (state.project.recordType === "Image") {
 
 								const img = $(create("img"))
 									.attr("class", "record-image")
@@ -1141,15 +1062,15 @@ const ProjectView = ({ project, onRecordClick, onRemoveProject, refreshPage }) =
 
 									modal.disable();
 
-									console.log("post" + " project_id " + project.id + " input " + Image)
+									console.log("post" + " project_id " + state.project.id + " input " + Image)
 
 									api.addRecord({
-										project_id: project.id,
+										project_id: state.project.id,
 										Text: Text,
 										Image: Image,
 										onSuccess: () => {
 											modal.hide()
-											refreshPage(project.id)
+											view.showRecords();
 										},
 										onError: (errorMessage) => {
 											modal.showErrorMessage(errorMessage)
@@ -1170,7 +1091,7 @@ const ProjectView = ({ project, onRecordClick, onRemoveProject, refreshPage }) =
 
 					let inputView;
 
-					if (project.recordType === "Image") {
+					if (state.project.recordType === "Image") {
 						inputView = $(create("img"))
 							.css("height", "64px")
 							.css("width", "64px")
@@ -1197,13 +1118,11 @@ const ProjectView = ({ project, onRecordClick, onRemoveProject, refreshPage }) =
 					if (record.tags) {
 
 						record.tags.forEach(tag => {
-							const tagView = create("div")
-
-							$(tagView)
-								.attr("class", "records-tags-val")
-								.text(tag.name + ": " + tag.value)
-
-							$(tagList).append(tagView);
+							$(tagList).append(
+								$(create("p"))
+									.attr("class", "records-tags-val")
+									.text(tag.name + ": " + tag.value)
+							);
 						})
 					}
 
@@ -1220,20 +1139,20 @@ const ProjectView = ({ project, onRecordClick, onRemoveProject, refreshPage }) =
 
 	view.showEvents = () => {
 
-		$(eventsTabButton)
+		$(view.eventsTabButton)
 			.css("background-color", "#ffa31a")
 			.css("color", "rgb(0, 0, 0.9)")
-		$(tagsTabButton)
+		$(view.tagsTabButton)
 			.css("background-color", "#1b1b1b")
 			.css("color", "#ffffff")
-		$(recordsTabButton)
+		$(view.recordsTabButton)
 			.css("background-color", "#1b1b1b")
 			.css("color", "#ffffff")
 
 		view.setContent(LoadingView())
 
 		api.getEventsForProject({
-			project_id: project.id,
+			project_id: state.project.id,
 			onSuccess: (events) => {
 
 				$(content).empty()
@@ -1251,6 +1170,100 @@ const ProjectView = ({ project, onRecordClick, onRemoveProject, refreshPage }) =
 	}
 
 	view.render = () => {
+
+		view.recordsTabButton = $(create("button"))
+			.text("Records")
+			.attr("class", "tablink")
+			.click(ev => {
+				view.setState({
+					tabSelected: "Records"
+				})
+			})
+
+		view.tagsTabButton = $(create("button"))
+			.text("Tags")
+			.attr("class", "tablink")
+			.css("background-color", "#ffa31a")
+			.css("color", "rgb(0, 0, 0.9)")
+			.click(ev => {
+				view.setState({
+					tabSelected: "Tags"
+				})
+			})
+
+		view.eventsTabButton = $(create("button"))
+			.text("Events")
+			.attr("class", "tablink")
+			.click(ev => {
+				view.setState({
+					tabSelected: "Events"
+				})
+			})
+
+		$(view).empty()
+
+		$(view)
+			.append(
+				$(create("div"))
+					.css("flex-dirextion", "row")
+					.append(
+						// Title
+						$(create("h2"))
+							.text(state.project.title)
+							.css("color", "#f90")
+							.css("padding-left", "20px")
+							.css("display", "inline-block")
+					)
+					.append(
+						$(create("button"))
+							.attr("class", "remove-project-button")
+							.text("Remove project")
+							.append(
+								$(create("i"))
+									.attr("class", "eos-icons")
+									.css("margin-left", "8px")
+									.text("remove_circle")
+							)
+							.click(ev => {
+								const modal = ModalView({
+									content: $(create("h4"))
+										.text("Are you sure you want to delete this project?")
+										.css("color", "#f90"),
+									onConfirm: () => {
+										modal.disable()
+										api.removeProject({
+											project_id: state.project.id,
+											onSuccess: () => {
+												modal.hide()
+												onRemoveProject()
+											},
+											onError: () => {
+												modal.enable()
+												modal.hide()
+											}
+										})
+									},
+								})
+							})
+					)
+			)
+			.append(
+				// Tabs
+				$(create("div"))
+					.css("display", "flex")
+					.css("flex-direction", "row")
+					.css("flex", "1")
+					.css("overflow-y", "hidden")
+					.append(
+						$(create("div"))
+							.attr("class", "tabs")
+							.append(view.recordsTabButton)
+							.append(view.tagsTabButton)
+							.append(view.eventsTabButton)
+					)
+					.append(content)
+			)
+
 		if (state.tabSelected === "Records") {
 			view.showRecords()
 		} else if (state.tabSelected === "Tags") {
@@ -1267,7 +1280,7 @@ const ProjectView = ({ project, onRecordClick, onRemoveProject, refreshPage }) =
 		view.render();
 	}
 
-	view.render();
+	view.reload();
 
 	return view;
 }
@@ -1401,14 +1414,24 @@ const RecordView = ({ record, project, onRemoveRecord, onRecordUpdate }) => {
 							.text("remove_circle")
 					)
 					.click(ev => {
-						api.removeRecord({
-							record_id: record.id,
-							onSuccess: () => {
-								onRemoveRecord();
+						const modal = ModalView({
+							content: $(create("h4"))
+								.text("Are you sure you want to delete this record?")
+								.css("color", "#f90"),
+							onConfirm: () => {
+								modal.disable()
+								api.removeRecord({
+									record_id: record.id,
+									onSuccess: () => {
+										modal.hide()
+										onRemoveRecord();
+									},
+									onError: () => {
+										modal.enable()
+										modal.hide()
+									}
+								})
 							},
-							onError: () => {
-
-							}
 						})
 					})
 			)

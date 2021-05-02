@@ -331,25 +331,3 @@ api.updateInputRecord = ({ record_id, Text, Image, onSuccess, onError }) => {
 		}
 	})
 }
-
-/**
- *
- * const formData = new FormData();
-	formData.append("Text", Text);
-	formData.append("Image", Image);
-
-	$.ajax({
-		method: "post",
-		url: "api/project/" + project_id + "/record",
-		processData: false,
-		contentType: false,
-		data: formData,
-		success: function (data, textStatus) {
-			const record = data;
-			onSuccess(record);
-		},
-		error: function (jqXHR, textStatus, errorThrown) {
-			onError(jqXHR.responseJSON.error)
-		}
-	})
- */
