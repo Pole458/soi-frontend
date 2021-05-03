@@ -133,11 +133,11 @@ api.getRecord = ({ id, onSuccess, onError }) => {
 	});
 }
 
-api.addProject = ({ title, onSuccess, onError }) => {
+api.addProject = ({ title, recordType, onSuccess, onError }) => {
 	$.ajax({
 		method: "post",
 		url: "api/project",
-		data: { 'title': title },
+		data: { 'title': title, 'recordType': recordType },
 		success: function (data, textStatus) {
 			const project = data;
 			onSuccess(project);
@@ -162,7 +162,8 @@ api.getEventsForUser = ({user_id, onSuccess, onError}) => {
 	})
 }
 
-api.getEventsForProject = ({project_id, onSuccess, onError}) => {
+api.getEventsForProject = ({ project_id, onSuccess, onError }) => {
+
 	$.ajax({
 		method: "get",
 		url: "api/project/" + project_id + "/events",
@@ -176,29 +177,39 @@ api.getEventsForProject = ({project_id, onSuccess, onError}) => {
 	})
 }
 
-api.getEventsForRecord = ({record_id, onSuccess, onError}) => {
+api.getEventsForRecord = ({ record_id, onSuccess, onError }) => {
 	$.ajax({
 		method: "get",
 		url: "api/record/" + record_id + "/events",
-		success: function(data, textStatus) {
+		success: function (data, textStatus) {
 			const events = data;
 			onSuccess(events);
 		},
-		error: function(jqXHR, textStatus, errorThrown) {
+		error: function (jqXHR, textStatus, errorThrown) {
 			onError(jqXHR.responseJSON.error)
 		}
 	})
 }
 
 
-api.addRecord = ({ project_id, input, onSuccess, onError }) => {
+api.addRecord = ({ project_id, Text, Image, onSuccess, onError }) => {
+
+	const formData = new FormData();
+	formData.append("Text", Text);
+	formData.append("Image", Image);
+
 	$.ajax({
 		method: "post",
-		url: "api/record",
-		data: { 'project_id': project_id, 'input': input },
+		url: "api/project/" + project_id + "/record",
+		processData: false,
+		contentType: false,
+		data: formData,
 		success: function (data, textStatus) {
 			const record = data;
 			onSuccess(record);
+		},
+		error: function (jqXHR, textStatus, errorThrown) {
+			onError(jqXHR.responseJSON.error)
 		}
 	})
 }
@@ -315,16 +326,23 @@ api.removeTagFromRecord = ({ record_id, tag_name, onSuccess, onError }) => {
 	})
 }
 
-api.modifyInputRecord = ({ record_id, input, onSuccess, onError }) => {
+api.updateInputRecord = ({ record_id, Text, Image, onSuccess, onError }) => {
+
+	const formData = new FormData();
+	formData.append("Text", Text);
+	formData.append("Image", Image);
+
 	$.ajax({
 		method: "post",
-		url: "api/modify-record",
-		data: { 'record_id': record_id, 'input': input },
+		url: "api/record/" + record_id + "/update",
+		processData: false,
+		contentType: false,
+		data: formData,
 		success: function (data, textStatus) {
-			onSuccess();
+			onSuccess(data);
 		},
 		error: function (jqXHR, textStatus, errorThrown) {
-			onError();
+			onError(jqXHR.error);
 		}
 	})
 }
