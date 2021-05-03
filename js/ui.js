@@ -679,12 +679,23 @@ const UserView = ({ user, onReturn }) => {
 
 			view.showOther();
 	})
+
+	const infoView = $(create("div"))
+		.attr("class", "tabcontent")
+		.css("display", "flex")
+		.css("flex-direction", "column")
+		.css("flex", "1")
+		.css("overflow-y", "auto")
+		.css("align-items", "center")
+		.css("min-width", "100%")
 			
-	$(content).append(
+	$(infoView).append(
 		$(create("div"))
 			.css("flex-direction", "row")
 			.css("display", "flex")
 			.css("padding-left", "12px")
+			.css("border-bottom", "1px solid #333")
+			.css("min-width", "96%")
 			.append(
 				$(create("h4"))
 					.text("Username: ")
@@ -703,11 +714,13 @@ const UserView = ({ user, onReturn }) => {
 	
 			if (!events) return;
 	
-			$(content).append(
+			$(infoView).append(
 				$(create("div"))
 					.css("flex-direction", "row")
 					.css("display", "flex")
 					.css("padding-left", "12px")
+					.css("border-bottom", "1px solid #333")
+					.css("min-width", "96%")
 					.append(
 						$(create("h4"))
 							.text("Sign in date: ")
@@ -720,6 +733,8 @@ const UserView = ({ user, onReturn }) => {
 							.css("color", "#ffffff")
 					)
 			)
+
+			$(content).append(infoView)
 		},
 		onError: () => {
 			ui.showLoginPage();
@@ -769,10 +784,21 @@ const UserView = ({ user, onReturn }) => {
 
 		$(content).empty()
 
+		const infoView = $(create("div"))
+		.attr("class", "tabcontent")
+		.css("display", "flex")
+		.css("flex-direction", "column")
+		.css("flex", "1")
+		.css("overflow-y", "auto")
+		.css("align-items", "center")
+		.css("min-width", "100%")
+
 		const infoList = $(create("div"))
 			.css("flex-direction", "row")
 			.css("display", "flex")
 			.css("padding-left", "12px")
+			.css("border-bottom", "1px solid #333")
+			.css("min-width", "96%")
 
 		$(infoList)
 			.append(
@@ -787,7 +813,7 @@ const UserView = ({ user, onReturn }) => {
 					.css("color", "#ffffff")
 			)
 			
-		$(content).append(infoList)
+		$(infoView).append(infoList)
 
 		api.getEventsForUser({
 			user_id: user.id,
@@ -795,11 +821,13 @@ const UserView = ({ user, onReturn }) => {
 
 				if (!events) return;
 
-				$(content).append(
+				$(infoView).append(
 					$(create("div"))
 						.css("flex-direction", "row")
 						.css("display", "flex")
 						.css("padding-left", "12px")
+						.css("border-bottom", "1px solid #333")
+						.css("min-width", "96%")
 						.append(
 							$(create("h4"))
 								.text("Sign in date: ")
@@ -812,6 +840,7 @@ const UserView = ({ user, onReturn }) => {
 								.css("color", "#ffffff")
 						)
 				)
+				$(content).append(infoView)
 			},
 			onError: () => {
 				ui.showLoginPage();
@@ -844,27 +873,24 @@ const UserView = ({ user, onReturn }) => {
 
 	view.showOther = () => {
 
-		$(content).empty()
-
-
 		view.setContent(LoadingView())
 
-		api.getEventsForProject({
-			project_id: project.id,
-			onSuccess: (events) => {
+		$(content).empty()
 
-				$(content).empty()
+		const other = $(create("div"))
+			.css("flex-direction", "row")
+			.css("display", "flex")
+			.css("padding-left", "12px")
 
-				if (!events) return;
+		$(other)
+			.append(
+				$(create("h3"))
+					.text("Placehoder...")
+					.css("color", "#ffffff")
+			)
 
-				events.forEach(e => {
-					$(content).append(EventView({ e: e }));
-				})
-			},
-			onError: () => {
-				ui.showLoginPage();
-			}
-		});
+		$(content).append(other)
+
 	}
 
 	return view;
@@ -1844,8 +1870,6 @@ const EventView = ({ e }) => {
 
 		)
 
-	
-
 	api.getUser({
 		id: e.user_id,
 		onSuccess: (user) => {
@@ -1884,7 +1908,7 @@ const EventView = ({ e }) => {
 			.append(" added Record ")
 			.append(
 				$(create("span"))
-					.text("#" + e.info.record_id + " " + e.info.input)
+					.text("#" + e.info.record_id)
 			)
 			.append(" to Project ")
 			.append(
@@ -1914,7 +1938,7 @@ const EventView = ({ e }) => {
 			.append(" deleted Record ")
 			.append(
 				$(create("span"))
-					.text("#" + e.info.record_id + " " + e.info.input)
+					.text("#" + e.info.record_id)
 			)
 	} else if (e.action === "added tag to project") {
 		const projectName = $(create("span"))
@@ -2019,7 +2043,6 @@ const EventView = ({ e }) => {
 			}
 		})
 	} else if (e.action === "set tag to record") {
-		const recordName = $(create("span"))
 
 		$(description)
 			.append(" set Tag ")
@@ -2034,21 +2057,10 @@ const EventView = ({ e }) => {
 			)
 			.append(" to Record ")
 			.append(
-				$(recordName)
-				//.text("#" + e.info.record_id)
+				$(create("span"))
+					.text("#" + e.info.record_id)
 		)
-
-		api.getRecord({
-			id: e.info.record_id,
-			onSuccess: (record) => {
-				$(recordName).text("#" + e.info.record_id + " " + record.input);
-			},
-			onError: () => {
-
-			}
-		})
 	} else if (e.action === "removed tag from record") {
-		const recordName = $(create("span"))
 		$(description)
 			.append(" removed ")
 			.append(
@@ -2057,37 +2069,17 @@ const EventView = ({ e }) => {
 			)
 			.append(" from Record ")
 			.append(
-				$(recordName)
-				//.text("#" + e.info.record_id)
+				$(create("span"))
+					.text("#" + e.info.record_id)
 		)
-
-		api.getRecord({
-			id: e.info.record_id,
-			onSuccess: (record) => {
-				$(recordName).text("#" + e.info.record_id + " " + record.input);
-			},
-			onError: () => {
-
-			}
-		})
 	} else if (e.action === "modified input of record") {
 		const recordName = $(create("span"))
 		$(description)
 			.append(" modified Input for Record ")
 			.append(
-				$(recordName)
-				//.text("#" + e.info.record_id)
+				$(create("span"))
+					.text("#" + e.info.record_id)
 		)
-
-		api.getRecord({
-			id: e.info.record_id,
-			onSuccess: (record) => {
-				$(recordName).text("#" + e.info.record_id + " " + record.input);
-			},
-			onError: () => {
-
-			}
-		})
 	}
 
 	$(view).append(description)
