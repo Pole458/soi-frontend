@@ -105,6 +105,19 @@ api.getProject = ({ id, onSuccess, onError }) => {
 	});
 }
 
+api.getProjectStatus = ({ id, onSuccess, onError}) => {
+	$.ajax({
+		method: 'get',
+		url: 'api/project/' + id + '/status',
+		success: function(data, textStatus) {
+			onSuccess(data)
+		},
+		error: function(jqXHR, textStatus, errorThrown) {
+			onError();
+		}
+	})
+}
+
 api.getRecords = ({ id, onSuccess, onError }) => {
 	$.ajax({
 		method: "get",

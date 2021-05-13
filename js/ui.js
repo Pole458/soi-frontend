@@ -899,17 +899,163 @@ const ProjectView = ({ project_id, onRecordClick, onRemoveProject, onProjectLoad
 		})
 	}
 
-	view.showTags = () => {
+	view.showRecords = () => {
 
-		$(view.recordsTabButton)
-			.css('background-color', '#1b1b1b')
-			.css('color', '#ffffff')
-		$(view.tagsTabButton)
-			.css('background-color', '#ffa31a')
-			.css('color', 'rgb(0, 0, 0.9)')
-		$(view.eventsTabButton)
-			.css('background-color', '#1b1b1b')
-			.css('color', '#ffffff')
+		view.setContent(LoadingView())
+
+		api.getRecords({
+			id: state.project.id,
+			onSuccess: (records) => {
+
+				if (state.tabSelected !== 'Records') return
+
+				$(content).empty()
+
+				$(content).append(
+					Fab({
+						onClick: () => {
+
+							let Image = null
+							let Text = null
+
+							let recordInput
+
+							if (state.project.recordType === 'Image') {
+
+								const img = ImageView({
+									height: '256px',
+									width: '256px'
+								})
+
+								$(img)
+									.click(e => {
+										$(fileInput).trigger('click')
+									})
+									.on('error', e => { Image = null })
+
+								const previewReader = new FileReader()
+								previewReader.onload = e => {
+									img.setSrc(e.target.result)
+								}
+
+								const fileInput = $(create('input'))
+									.attr('type', 'file')
+									.css('display', 'none')
+									.attr('accept', 'image/*')
+									.on('change', e => {
+										const file = e.target.files[0]
+										Image = file
+										previewReader.readAsDataURL(file)
+										$(fileInput).val('')
+									})
+
+								recordInput = $(create('div'))
+									.css('display', 'flex')
+									.css('flex-direction', 'column')
+									.append(img)
+									.append(fileInput)
+							} else {
+								recordInput = $(create('input'))
+									.attr('class', 'new-record-input')
+									.attr('type', 'text')
+									.attr('placeholder', 'Insert record input...')
+									.attr('value', '')
+									.on('change', e => {
+										Text = $(e.target).val()
+									})
+							}
+
+							const modal = ModalView({
+								content: $(create('div'))
+									.append(
+										$(create('p'))
+											.text('Insert new record:')
+											.css('color', '#ffffff')
+									)
+									.append(
+										recordInput
+									),
+								onConfirm: () => {
+
+									if (!Text && !Image) {
+										modal.showErrorMessage('Please insert valid input')
+										return
+									}
+
+									modal.disable()
+
+									api.addRecord({
+										project_id: state.project.id,
+										Text: Text,
+										Image: Image,
+										onSuccess: () => {
+											modal.hide()
+											view.showRecords()
+										},
+										onError: (errorMessage) => {
+											modal.showErrorMessage(errorMessage)
+											modal.enable()
+										}
+									})
+								}
+							})
+						}
+					})
+				)
+
+				if (!records) return
+
+				records.forEach(record => {
+
+					let inputView
+
+					if (state.project.recordType === 'Image') {
+						inputView = ImageView({
+							src: 'api/images/' + record.input,
+							width: '64px',
+							height: '64px'
+						})
+					} else {
+						inputView = $(create('h3'))
+							.text(record.input)
+					}
+
+					const recordView = $(create('div'))
+						.attr('class', 'records-list')
+						.append(inputView)
+						.click(ev => {
+							onRecordClick(record)
+						})
+
+					const tagList = create('div')
+					$(tagList)
+						.css('display', 'flex')
+						.css('flex-direction', 'row')
+						.css('flex-wrap', 'wrap')
+
+					if (record.tags) {
+
+						record.tags.forEach(tag => {
+							$(tagList).append(
+								$(create('p'))
+									.attr('class', 'records-tags-val')
+									.text(tag.name + ': ' + tag.value)
+							)
+						})
+					}
+
+					$(recordView).append(tagList)
+
+					$(content).append(recordView)
+				})
+			},
+			onError: () => {
+				ui.showLoginPage()
+			}
+		})
+	}
+
+	view.showTags = () => {
 
 		$(content).empty()
 
@@ -1079,183 +1225,26 @@ const ProjectView = ({ project_id, onRecordClick, onRemoveProject, onProjectLoad
 		})
 	}
 
-	view.showRecords = () => {
-
-		$(view.recordsTabButton)
-			.css('background-color', '#ffa31a')
-			.css('color', 'rgb(0, 0, 0.9)')
-		$(view.tagsTabButton)
-			.css('background-color', '#1b1b1b')
-			.css('color', '#ffffff')
-		$(view.eventsTabButton)
-			.css('background-color', '#1b1b1b')
-			.css('color', '#ffffff')
-
+	view.showStatus = () => {
 		view.setContent(LoadingView())
 
-		api.getRecords({
-			id: state.project.id,
-			onSuccess: (records) => {
+		api.getProjectStatus({
+			id: project_id,
+			onSuccess: (projectStatus) => {
 
-				if (state.tabSelected !== 'Records') return
+				if (state.tabSelected !== 'Status') return
 
-				$(content).empty()
-
-				$(content).append(
-					Fab({
-						onClick: () => {
-
-							let Image = null
-							let Text = null
-
-							let recordInput
-
-							if (state.project.recordType === 'Image') {
-
-								const img = ImageView({
-									height: '256px',
-									width: '256px'
-								})
-
-								$(img)
-									.click(e => {
-										$(fileInput).trigger('click')
-									})
-									.on('error', e => { Image = null })
-
-								const previewReader = new FileReader()
-								previewReader.onload = e => {
-									img.setSrc(e.target.result)
-								}
-
-								const fileInput = $(create('input'))
-									.attr('type', 'file')
-									.css('display', 'none')
-									.attr('accept', 'image/*')
-									.on('change', e => {
-										const file = e.target.files[0]
-										Image = file
-										previewReader.readAsDataURL(file)
-										$(fileInput).val('')
-									})
-
-								recordInput = $(create('div'))
-									.css('display', 'flex')
-									.css('flex-direction', 'column')
-									.append(img)
-									.append(fileInput)
-							} else {
-								recordInput = $(create('input'))
-									.attr('class', 'new-record-input')
-									.attr('type', 'text')
-									.attr('placeholder', 'Insert record input...')
-									.attr('value', '')
-									.on('change', e => {
-										Text = $(e.target).val()
-									})
-							}
-
-							const modal = ModalView({
-								content: $(create('div'))
-									.append(
-										$(create('p'))
-											.text('Insert new record:')
-											.css('color', '#ffffff')
-									)
-									.append(
-										recordInput
-									),
-								onConfirm: () => {
-
-									if (!Text && !Image) {
-										modal.showErrorMessage('Please insert valid input')
-										return
-									}
-
-									modal.disable()
-
-									api.addRecord({
-										project_id: state.project.id,
-										Text: Text,
-										Image: Image,
-										onSuccess: () => {
-											modal.hide()
-											view.showRecords()
-										},
-										onError: (errorMessage) => {
-											modal.showErrorMessage(errorMessage)
-											modal.enable()
-										}
-									})
-								}
-							})
-						}
-					})
+				view.setContent(
+					$(create('h3'))
+						.text(JSON.stringify(projectStatus))
 				)
 
-				if (!records) return
-
-				records.forEach(record => {
-
-					let inputView
-
-					if (state.project.recordType === 'Image') {
-						inputView = ImageView({
-							src: 'api/images/' + record.input,
-							width: '64px',
-							height: '64px'
-						})
-					} else {
-						inputView = $(create('h3'))
-							.text(record.input)
-					}
-
-					const recordView = $(create('div'))
-						.attr('class', 'records-list')
-						.append(inputView)
-						.click(ev => {
-							onRecordClick(record)
-						})
-
-					const tagList = create('div')
-					$(tagList)
-						.css('display', 'flex')
-						.css('flex-direction', 'row')
-						.css('flex-wrap', 'wrap')
-
-					if (record.tags) {
-
-						record.tags.forEach(tag => {
-							$(tagList).append(
-								$(create('p'))
-									.attr('class', 'records-tags-val')
-									.text(tag.name + ': ' + tag.value)
-							)
-						})
-					}
-
-					$(recordView).append(tagList)
-
-					$(content).append(recordView)
-				})
 			},
-			onError: () => {
-				ui.showLoginPage()
-			}
+			onError: () => { }
 		})
 	}
 
 	view.showEvents = () => {
-
-		$(view.eventsTabButton)
-			.css('background-color', '#ffa31a')
-			.css('color', 'rgb(0, 0, 0.9)')
-		$(view.tagsTabButton)
-			.css('background-color', '#1b1b1b')
-			.css('color', '#ffffff')
-		$(view.recordsTabButton)
-			.css('background-color', '#1b1b1b')
-			.css('color', '#ffffff')
 
 		view.setContent(LoadingView())
 
@@ -1281,7 +1270,7 @@ const ProjectView = ({ project_id, onRecordClick, onRemoveProject, onProjectLoad
 
 	view.render = () => {
 
-		view.recordsTabButton = $(create('button'))
+		const recordsTabButton = $(create('button'))
 			.text('Records')
 			.attr('class', 'tablink')
 			.click(ev => {
@@ -1290,7 +1279,7 @@ const ProjectView = ({ project_id, onRecordClick, onRemoveProject, onProjectLoad
 				})
 			})
 
-		view.tagsTabButton = $(create('button'))
+		const tagsTabButton = $(create('button'))
 			.text('Tags')
 			.attr('class', 'tablink')
 			.click(ev => {
@@ -1299,12 +1288,21 @@ const ProjectView = ({ project_id, onRecordClick, onRemoveProject, onProjectLoad
 				})
 			})
 
-		view.eventsTabButton = $(create('button'))
+		const eventsTabButton = $(create('button'))
 			.text('Events')
 			.attr('class', 'tablink')
 			.click(ev => {
 				view.setState({
 					tabSelected: 'Events'
+				})
+			})
+
+		const statusTabButton = $(create('button'))
+			.text('Status')
+			.attr('class', 'tablink')
+			.click(ev => {
+				view.setState({
+					tabSelected: 'Status'
 				})
 			})
 
@@ -1365,19 +1363,76 @@ const ProjectView = ({ project_id, onRecordClick, onRemoveProject, onProjectLoad
 					.append(
 						$(create('div'))
 							.attr('class', 'tabs')
-							.append(view.recordsTabButton)
-							.append(view.tagsTabButton)
-							.append(view.eventsTabButton)
+							.append(recordsTabButton)
+							.append(tagsTabButton)
+							.append(eventsTabButton)
+							.append(statusTabButton)
 					)
 					.append(content)
 			)
 
 		if (state.tabSelected === 'Records') {
+			$(recordsTabButton)
+				.css('background-color', '#ffa31a')
+				.css('color', 'rgb(0, 0, 0.9)')
+			$(tagsTabButton)
+				.css('background-color', '#1b1b1b')
+				.css('color', '#ffffff')
+			$(eventsTabButton)
+				.css('background-color', '#1b1b1b')
+				.css('color', '#ffffff')
+			$(statusTabButton)
+				.css('background-color', '#1b1b1b')
+				.css('color', '#ffffff')
+
+
 			view.showRecords()
 		} else if (state.tabSelected === 'Tags') {
+			$(recordsTabButton)
+				.css('background-color', '#1b1b1b')
+				.css('color', '#ffffff')
+			$(tagsTabButton)
+				.css('background-color', '#ffa31a')
+				.css('color', 'rgb(0, 0, 0.9)')
+			$(eventsTabButton)
+				.css('background-color', '#1b1b1b')
+				.css('color', '#ffffff')
+			$(statusTabButton)
+				.css('background-color', '#1b1b1b')
+				.css('color', '#ffffff')
+
 			view.showTags()
 		} else if (state.tabSelected === 'Events') {
+			$(eventsTabButton)
+				.css('background-color', '#ffa31a')
+				.css('color', 'rgb(0, 0, 0.9)')
+			$(tagsTabButton)
+				.css('background-color', '#1b1b1b')
+				.css('color', '#ffffff')
+			$(recordsTabButton)
+				.css('background-color', '#1b1b1b')
+				.css('color', '#ffffff')
+			$(statusTabButton)
+				.css('background-color', '#1b1b1b')
+				.css('color', '#ffffff')
+
 			view.showEvents()
+		} else if (state.tabSelected === 'Status') {
+			$(eventsTabButton)
+				.css('background-color', '#1b1b1b')
+				.css('color', '#ffffff')
+
+			$(tagsTabButton)
+				.css('background-color', '#1b1b1b')
+				.css('color', '#ffffff')
+			$(recordsTabButton)
+				.css('background-color', '#1b1b1b')
+				.css('color', '#ffffff')
+			$(statusTabButton)
+				.css('background-color', '#ffa31a')
+				.css('color', 'rgb(0, 0, 0.9)')
+
+			view.showStatus()
 		}
 	}
 
