@@ -1790,6 +1790,12 @@ const RecordView = ({ record, project, onRemoveRecord, onRecordUpdate }) => {
 		)
 
 		if (state.tabSelected === 'Events') {
+			$(eventsTabButton)
+				.css('background-color', '#ffa31a')
+				.css('color', 'rgb(0, 0, 0.9)')
+			$(tagsTabButton)
+				.css('background-color', '#1b1b1b')
+				.css('color', '#ffffff')
 
 			view.showEvents()
 		} else {
