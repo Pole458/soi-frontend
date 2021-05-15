@@ -1234,11 +1234,115 @@ const ProjectView = ({ project_id, onRecordClick, onRemoveProject, onProjectLoad
 
 				if (state.tabSelected !== 'Status') return
 
-				view.setContent(
-					$(create('h3'))
-						.text(JSON.stringify(projectStatus))
-				)
+				let noTags = projectStatus.records - projectStatus.taggedRecords
 
+				const statusList = $(create('div'))
+					.append(
+						$(create('div'))
+							.attr('class', "status-list")
+							.append(
+								$(create('h4'))
+									.text('Title: ')
+									.css('color', '#ffffff')
+							)
+							.append(
+								$(create('h4'))
+									.text(projectStatus.title)
+									.css('padding-left', '4px')
+									.css('color', '#ffffff')
+							)
+					)
+					.append(
+						$(create('div'))
+							.attr('class', "status-list")
+							.append(
+								$(create('h4'))
+									.text('Number of Records: ')
+									.css('color', '#ffffff')
+							)
+							.append(
+								$(create('h4'))
+									.text(projectStatus.records)
+									.css('padding-left', '4px')
+									.css('color', '#ffffff')
+							)
+					)
+				if(noTags != 0){
+					$(statusList)
+					.append(
+						$(create('div'))
+							.attr('class', "status-list")
+							.append(
+								$(create('h4'))
+									.text('Number of records without tags: ')
+									.css('color', '#ffffff')
+							)
+							.append(
+								$(create('h4'))
+									.text(noTags)
+									.css('padding-left', '4px')
+									.css('color', '#ffffff')
+							)
+					)
+				}
+				else if (projectStatus.records != 0){
+					$(statusList)
+					.append(
+						$(create('div'))
+							.attr('class', "status-list")
+							.append(
+								$(create('h4'))
+									.text('Every record has at least one tag')
+									.css('color', '#ffffff')
+							)
+					)
+
+				}
+
+				for(const tag in projectStatus.tags){
+					if(projectStatus.tags[tag].count < 5){
+						$(statusList)
+						 	.append(
+								$(create('div'))
+									.attr('class', "status-list")
+						 			.append(
+						 				$(create('h4'))
+						 					.text('The tag '+ tag + ' has insufficient number of records associated: ')
+						 					.css('color', '#ffffff')
+						 			)
+						 			.append(
+						 				$(create('h4'))
+						 					.text(projectStatus.tags[tag].count)
+											.css('color', '#ffffff')
+											.css('padding-left', '4px')
+						 			)
+						 	)	
+					}
+
+					for(const value in projectStatus.tags[tag].values){
+						if(projectStatus.tags[tag].values[value] < 3){
+							$(statusList)
+								.append(
+									 $(create('div'))
+									 	.attr('class', "status-list")
+							 			.append(
+							 				$(create('h4'))
+							 					.text('The tag value '+ value + ' has insufficient number of records associated: ')
+							 					.css('color', '#ffffff')
+							 			)
+							 			.append(
+							 				$(create('h4'))
+							 					.text(projectStatus.tags[tag].values[value])
+												 .css('color', '#ffffff')
+												 .css('padding-left', '4px')
+							 			)
+							 	)
+						}
+					}
+							
+				}
+				
+				view.setContent(statusList)
 			},
 			onError: () => { }
 		})

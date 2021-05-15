@@ -381,6 +381,17 @@ h1,h2,h3,h4,h5,label,input,button,select,option,p,textarea {
   background-color: #f90;
 }
 
+.status-list{
+  flex-direction: row;
+	display: flex;
+  border: 1px solid #333;
+  align-items: center;
+  min-height: 64px;
+  margin: 8px;
+  padding-left: 8px;
+  border-radius: 8px;
+}
+
 .records-tags-val {
   margin: 8px;
   border-radius: 80px;
