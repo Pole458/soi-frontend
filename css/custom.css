@@ -1,4 +1,21 @@
 /* General */
+@import url(//db.onlinewebfonts.com/c/6228016f2b172c06410f3a2356d33f6c?family=Roobert-Regular);
+
+@font-face {
+  font-family: "Roobert-Regular";
+  src: url("//db.onlinewebfonts.com/t/6228016f2b172c06410f3a2356d33f6c.eot"); src: url("//db.onlinewebfonts.com/t/6228016f2b172c06410f3a2356d33f6c.eot?#iefix") format("embedded-opentype"), url("//db.onlinewebfonts.com/t/6228016f2b172c06410f3a2356d33f6c.woff2") format("woff2"), url("//db.onlinewebfonts.com/t/6228016f2b172c06410f3a2356d33f6c.woff") format("woff"), url("//db.onlinewebfonts.com/t/6228016f2b172c06410f3a2356d33f6c.ttf") format("truetype"), url("//db.onlinewebfonts.com/t/6228016f2b172c06410f3a2356d33f6c.svg#Roobert-Regular") format("svg");
+}
+
+:root {
+  --primary: #9146ff;
+  --primary-accent: #8205b4;
+  --white: #ffffff;
+  --black: #1b1b1b;
+  --gray: #333;
+  --red: #fa2828;
+  --yellow: #fafa19;
+  --green: #00fa05;
+}
 
 html {
   height: 100%;
@@ -10,12 +27,12 @@ body {
   display: flex;
   /* Scrollar support for Firefox */
   overflow-y: hidden;
-  scrollbar-color: #f90 #333;
+  scrollbar-color: var(--primary) var(--gray);
 }
 
 h1,h2,h3,h4,h5,label,input,button,select,option,p,textarea {
-  color: #444;
-  font-family: Arial, Helvetica, sans-serif;
+  color: var(--white);
+  font-family: 'Roobert-Regular', Arial, sans-serif;
 }
 
 .eos-icons{
@@ -29,11 +46,11 @@ h1,h2,h3,h4,h5,label,input,button,select,option,p,textarea {
 }
 
 ::-webkit-scrollbar-track {
-  background: #333;
+  background: var(--gray);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #f90;
+  background: var(--primary);
 }
 
 /* Modal */
@@ -47,16 +64,16 @@ h1,h2,h3,h4,h5,label,input,button,select,option,p,textarea {
   padding-top: 200px;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.9);
+  background-color: var(--black);
 }
 
 .modal-content {
-  background-color: #1b1b1b;
+  background-color: var(--black);
   width: 80%;
   margin: auto;
   position: relative;
   padding: 16px 32px;
-  border: 1px solid #333;
+  border: 1px solid var(--gray);
 }
 
 .modal-buttons {
@@ -66,15 +83,15 @@ h1,h2,h3,h4,h5,label,input,button,select,option,p,textarea {
 } 
 
 .modal-button {
-  background-color: #f90;
-  color: rgb(0, 0, 0.9);
+  background-color: var(--primary);
+  color: var(--black);
   border: 0;
   border-radius: 4px;
   font-size: 18px;
 }
 
 .modal-button:hover{
-  background-color: #ffa31a;
+  background-color: var(--primary-accent);
   cursor: pointer;
 }
 
@@ -88,29 +105,29 @@ h1,h2,h3,h4,h5,label,input,button,select,option,p,textarea {
   justify-content: center;
   height: 64px;
   width: 64px;
-  background-color: #f90;
+  background-color: var(--primary);
   border-radius: 50%;
 }
 
 .fab:hover {
-  background-color:#ffa31a;
+  background-color:var(--primary-accent);
 }
 
 /* App Bar */
 .app-bar {
-  background-color: #1b1b1b;
+  background-color: var(--black);
   display: flex;
   width: 100%;
   flex-direction: row;
   align-items: center;
-  border-bottom: 1px solid #333;
+  border-bottom: 1px solid var(--gray);
 }
 
 .app-bar-path {
   align-items: center;
   display: flex;
   flex-direction: row;
-  background-color: rgb(0, 0, 0,9);
+  background-color: var(--black);
   border-top-right-radius: 10px;
   border-bottom-right-radius: 10px;
 }
@@ -122,7 +139,7 @@ h1,h2,h3,h4,h5,label,input,button,select,option,p,textarea {
   box-shadow: none;
   border: none;
   background-color: transparent;
-  color: white;
+  color: var(--white);
   outline: none;
   font-weight: bold;
 }
@@ -133,7 +150,7 @@ h1,h2,h3,h4,h5,label,input,button,select,option,p,textarea {
 }
 
 .button-path:hover {
-  color: #ffa31a;
+  color: var(--primary);
   cursor: pointer;
 }
 
@@ -150,13 +167,13 @@ h1,h2,h3,h4,h5,label,input,button,select,option,p,textarea {
   justify-content: space-around;
   box-shadow: none;
   border: none;
-  background-color: rgb(0, 0, 0.9);
-  color: white;
+  background-color: var(--black);
+  color: var(--white);
   outline: none;
 }
 
 .app-bar-user-info button:hover {
-  color: #f8c82a;
+  color: var(--primary);
   cursor: pointer;
 }
 
@@ -183,7 +200,7 @@ h1,h2,h3,h4,h5,label,input,button,select,option,p,textarea {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: rgb(0, 0, 0.9);
+  background-color: var(--black);
 }
 
 .login-group-element{
@@ -194,14 +211,14 @@ h1,h2,h3,h4,h5,label,input,button,select,option,p,textarea {
 }
 
 .login-group input{
-  border: 1px solid #ffffff;
-  background-color: rgb(0, 0, 0.9);
-  color: #ffffff;
+  border: 1px solid var(--white);
+  background-color: var(--black);
+  color: var(--white);
 }
 
 .login-group button{
-  color: #1b1b1b;
-  background-color: #f90;
+  color: var(--black);
+  background-color: var(--primary);
   border-radius: 6px;
   border: 0;
   font-size: 16px;
@@ -209,12 +226,12 @@ h1,h2,h3,h4,h5,label,input,button,select,option,p,textarea {
 }
 
 .login-group button:hover{
-  background-color: #ffa31a;
+  background-color: var(--primary-accent);
 }
 
 /* Main div */
 .main-content-div {
-  background-color: #1b1b1b;
+  background-color: var(--black);
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -223,7 +240,6 @@ h1,h2,h3,h4,h5,label,input,button,select,option,p,textarea {
 
 /* Project */
 .project {
-  color: #ffffff;
   font-weight: bolder;
   display: flex;
   flex-direction: row;
@@ -232,25 +248,24 @@ h1,h2,h3,h4,h5,label,input,button,select,option,p,textarea {
   margin: 8px;
   padding-left: 18px;
   border-radius: 8px;
-  border: 1px solid #333;
+  border: 1px solid var(--gray);
 }
 
 .project h3{
-  color: #ffffff;
+  color: var(--white);
 }
 
 .project:hover {
-  background-color: rgb(0,0, 0.9);
   cursor: pointer;
 }
 
 .project:hover h3{
-  color:  #ffa31a;
+  color: var(--primary);
 }
 
 .type-project-selector {
-  background-color: #f90;
-  color:rgb(0, 0, 0.9);
+  background-color: var(--primary);
+  color:var(--black);
   border:0;
 }
 
@@ -264,23 +279,23 @@ h1,h2,h3,h4,h5,label,input,button,select,option,p,textarea {
   float: right;
   margin-top: 20px;
   margin-right: 8px;
-  background-color: #f90;
-  color: rgb(0, 0, 0.9);
+  background-color: var(--primary);
+  color: var(--black);
   border: 0;
   border-radius: 4px;;
 }
 
 .remove-project-button:hover{
   cursor: pointer;
-  background-color: #ffa31a;
+  background-color: var(--primary-accent);
 }
 
 .tabs {
   display: flex;
   flex-direction: column;
-  border: 1px solid #333;
+  border: 1px solid var(--gray);
   float: left;
-  background-color: #1b1b1b;
+  background-color: var(--black);
   width: 20%;
   overflow-y: hidden;
   /* height: 100%; */
@@ -288,7 +303,7 @@ h1,h2,h3,h4,h5,label,input,button,select,option,p,textarea {
 
 .tablink {
   background-color: inherit;
-  color: #ffffff;
+  color: var(--white);
   padding: 22px 16px;
   width: 100%;
   border: none;
@@ -300,7 +315,7 @@ h1,h2,h3,h4,h5,label,input,button,select,option,p,textarea {
 }
 
 .tablink:hover {
-  background-color: rgb(0, 0, 0.9);
+  background-color: var(--black);
 }
 
 .tabcontent {
@@ -310,7 +325,7 @@ h1,h2,h3,h4,h5,label,input,button,select,option,p,textarea {
   align-items: stretch;
   overflow-y: auto;
   overflow-x: hidden;
-  border: 1px solid #333;
+  border: 1px solid var(--gray);
   border-left: none;
 }
 
@@ -321,11 +336,11 @@ h1,h2,h3,h4,h5,label,input,button,select,option,p,textarea {
   margin: 8px;
   padding: 8px;
   border-radius: 8px;
-  border: 1px solid #333;
+  border: 1px solid var(--gray);
 }
 
 .tags-list:hover {
-  background-color: rgb(0, 0, 0.9);
+  background-color: var(--black);
 }
 
 .records-list {
@@ -336,15 +351,15 @@ h1,h2,h3,h4,h5,label,input,button,select,option,p,textarea {
   margin: 8px;
   padding: 8px;
   border-radius: 8px;
-  border: 1px solid #333;
+  border: 1px solid var(--gray);
 }
 
 .records-list h3{
-  color: #ffffff;
+  color: var(--white);
 }
 
 .records-list:hover {
-  background-color: rgb(0, 0, 0.9);
+  background-color: var(--black);
   cursor: pointer;
 }
 
@@ -353,13 +368,13 @@ h1,h2,h3,h4,h5,label,input,button,select,option,p,textarea {
   display: inline;
   right: 16px;
   border: 0;
-  background-color: #f90;
-  color: rgb(0, 0, 0.9);
+  background-color: var(--primary);
+  color: var(--black);
   border-radius: 4px;
 }
 
 .remove-tags-project:hover{
-  background-color: #ffa31a;
+  background-color: var(--primary-accent);
 }
 
 .project-tags-val {
@@ -368,23 +383,23 @@ h1,h2,h3,h4,h5,label,input,button,select,option,p,textarea {
   border-radius: 80px;
   margin-right: 8px;
   padding: 4px 8px;
-  border: 1px solid black;
-  background-color: #ffa31a;
-  color: rgb(0, 0, 0.9)
+  border: 1px solid var(--black);
+  background-color: var(--primary);
+  color: var(--black)
 }
 
 .project-tags-val:hover{
   cursor: default;
 }
 
-#add-tag-value-project:hover{
-  background-color: #f90;
+.project-tags-val:hover{
+  background-color: var(--primary-accent);
 }
 
 .status-list{
   flex-direction: row;
 	display: flex;
-  border: 1px solid #333;
+  border: 1px solid var(--gray);
   align-items: center;
   min-height: 64px;
   margin: 8px;
@@ -396,9 +411,9 @@ h1,h2,h3,h4,h5,label,input,button,select,option,p,textarea {
   margin: 8px;
   border-radius: 80px;
   padding: 4px;
-  border: 1px solid black;
-  background-color: #ffa31a;
-  color: rgb(0, 0, 0.9);
+  border: 1px solid var(--black);
+  background-color: var(--primary);
+  color: var(--black);
 }
 
 .records-tags-val:hover {
@@ -407,36 +422,36 @@ h1,h2,h3,h4,h5,label,input,button,select,option,p,textarea {
 
 .modify-input-button{
   margin-left: 32px;
-  background-color: #f90;
-  color: rgb(0, 0, 0.9);
+  background-color: var(--primary);
+  color: var(--black);
   border: 0;
   border-radius: 4px;
 }
 
 .modify-input-button:hover{
   cursor: pointer;
-  background-color: #ffa31a;
+  background-color: var(--primary-accent);
 }
 
 .input-modifier{
-  background-color: #1b1b1b;
-  border: 1px solid #ffffff;
-  color: #ffffff;
+  background-color: var(--black);
+  border: 1px solid var(--white);
+  color: var(--white);
 }
 
 .remove-record-button{
   display: flex;
   align-items: center;
   float: right;
-  background-color: #f90;
-  color: rgb(0, 0, 0.9);
+  background-color: var(--primary);
+  color: var(--black);
   border: 0;
   border-radius: 4px;;
 }
 
 .remove-record-button:hover{
   cursor: pointer;
-  background-color: #ffa31a;
+  background-color: var(--primary-accent);
 }
 
 .tag-record {
@@ -446,22 +461,22 @@ h1,h2,h3,h4,h5,label,input,button,select,option,p,textarea {
   padding: 0px 8px;
   margin: 8px;
   border-radius: 8px;
-  border: 1px solid #333; 
-  color: #ffffff;
+  border: 1px solid var(--gray); 
+  color: var(--white);
   font-weight: bolder;
 }
 
 .remove-tags-records{
-  background-color: #f90;
-  color: rgb(0, 0, 0.9);
+  background-color: var(--primary);
+  color: var(--black);
   border: 0;
   border-radius: 4px;
 }
 
 .select-tag-value-record{
   margin-left: 16px;
-  background-color: #f90;
-  color:rgb(0, 0, 0.9);
+  background-color: var(--primary);
+  color:var(--black);
   border:0;
 }
 
@@ -470,8 +485,8 @@ h1,h2,h3,h4,h5,label,input,button,select,option,p,textarea {
 }
 
 .new-record-tag-selector{
-  background-color: #f90;
-  color:rgb(0, 0, 0.9);
+  background-color: var(--primary);
+  color:var(--black);
   border:0;
 }
 
@@ -480,14 +495,14 @@ h1,h2,h3,h4,h5,label,input,button,select,option,p,textarea {
 }
 
 .new-record-input {
-  color: #ffffff;
-  background-color: #1b1b1b;
-  border: 1px solid #ffffff;
+  color: var(--white);
+  background-color: var(--black);
+  border: 1px solid var(--white);
 }
 
 .new-record-tag-value-selector{
-  background-color: #f90;
-  color:rgb(0, 0, 0.9);
+  background-color: var(--primary);
+  color:var(--black);
   border:0;
   margin-left: 8px;
 }
@@ -508,7 +523,7 @@ h1,h2,h3,h4,h5,label,input,button,select,option,p,textarea {
 }
 
 .add-tag-record:hover{
-  background-color: rgb(0, 0, 0.9);
+  background-color: var(--black);
   cursor: pointer;
 }
 
@@ -518,13 +533,13 @@ h1,h2,h3,h4,h5,label,input,button,select,option,p,textarea {
   margin: 8px;
   padding: 0px 8px;
   border-radius: 8px;
-  border: 1px solid #333;
+  border: 1px solid var(--gray);
 }
 
 .events-list span {
-  color: #f90
+  color: var(--primary)
 }
 
 .events-list h3 {
-  color: #ffffff;
+  color: var(--white);
 }

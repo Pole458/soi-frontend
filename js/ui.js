@@ -43,7 +43,7 @@ const ImageView = ({ src, width, height }) => {
 			'height': height,
 			'width': width,
 			'object-fit': 'contain',
-			'background-color': '#333',
+			'background-color': 'var(--gray)',
 			'border-radius': '8px'
 		})
 
@@ -68,7 +68,7 @@ const ModalView = ({ content, onConfirm }) => {
 	const view = create('div')
 
 	const errorDialog = $(create('p'))
-		.css('color', 'maroon')
+		.css('color', 'var(--red)')
 		.css('visibility', 'hidden')
 		.css('text-align', 'center')
 		.text('Error Message')
@@ -237,7 +237,7 @@ const LoginPage = () => {
 
 	const logInErrorView = $(create('p'))
 		.css('visibility', 'hidden')
-		.css('color', 'maroon')
+		.css('color', 'var(--red)')
 		.text('Error Message')
 
 
@@ -339,7 +339,7 @@ const MainPage = () => {
 					$(create('h2'))
 						.text('Projects')
 						.css({
-							'color': '#f90',
+							'color': 'var(--primary)',
 							'padding-left': '20px'
 						})
 				)
@@ -355,9 +355,9 @@ const MainPage = () => {
 									'placeholder': 'Insert project name...',
 								})
 								.css({
-									'color': '#ffffff',
-									'background-color': '#1b1b1b',
-									'border': '1px solid #ffffff'
+									'color': 'var(--white)',
+									'background-color': 'var(--black)',
+									'border': '1px solid var(--white)'
 								})
 
 							const recordTypeSelect = $(create('select'))
@@ -366,13 +366,13 @@ const MainPage = () => {
 									$(create('option'))
 										.attr('Value', 'Text')
 										.text('Text')
-										.css('color', 'rgb(0, 0, 0.9)')
+										.css('color', 'var(--black)')
 								)
 								.append(
 									$(create('option'))
 										.attr('Value', 'Image')
 										.text('Image')
-										.css('color', 'rgb(0, 0, 0.9)')
+										.css('color', 'var(--black)')
 								)
 
 							const modal = ModalView({
@@ -380,13 +380,13 @@ const MainPage = () => {
 									.append(
 										$(create('p'))
 											.text('Insert new project name:')
-											.css('color', '#ffffff')
+											.css('color', 'var(--white)')
 									)
 									.append(titleinput)
 									.append(
 										$(create('p'))
 											.text('Select record type')
-											.css('color', '#ffffff')
+											.css('color', 'var(--white)')
 									)
 									.append(recordTypeSelect),
 								onConfirm: () => {
@@ -648,14 +648,14 @@ const UserView = ({ user }) => {
 		view.setContent(LoadingView())
 
 		$(infoTabButton)
-			.css('background-color', '#ffa31a')
-			.css('color', 'rgb(0, 0, 0.9)')
+			.css('background-color', 'var(--primary)')
+			.css('color', 'var(--black)')
 		$(eventsTabButton)
-			.css('background-color', '#1b1b1b')
-			.css('color', '#ffffff')
+			.css('background-color', 'var(--black)')
+			.css('color', 'var(--white)')
 		$(otherTabButton)
-			.css('background-color', '#1b1b1b')
-			.css('color', '#ffffff')
+			.css('background-color', 'var(--black)')
+			.css('color', 'var(--white)')
 
 		const infoList = $(create('div'))
 			.append(
@@ -663,17 +663,17 @@ const UserView = ({ user }) => {
 					.css('flex-direction', 'row')
 					.css('display', 'flex')
 					.css('padding', '0px 8px')
-					.css('border-bottom', '1px solid #333')
+					.css('border-bottom', '1px solid var(--gray)')
 					.append(
 						$(create('h4'))
 							.text('Username: ')
-							.css('color', '#ffffff')
+							.css('color', 'var(--white)')
 					)
 					.append(
 						$(create('h4'))
 							.text(user.username)
 							.css('padding-left', '4px')
-							.css('color', '#ffffff')
+							.css('color', 'var(--white)')
 					)
 			)
 
@@ -693,17 +693,17 @@ const UserView = ({ user }) => {
 							.css('flex-direction', 'row')
 							.css('display', 'flex')
 							.css('padding', '0px 8px')
-							.css('border-bottom', '1px solid #333')
+							.css('border-bottom', '1px solid var(--gray)')
 							.append(
 								$(create('h4'))
 									.text('Sign in date: ')
-									.css('color', '#ffffff')
+									.css('color', 'var(--white)')
 							)
 							.append(
 								$(create('h4'))
 									.text(new Date(events[0].date).toLocaleString())
 									.css('padding-left', '4px')
-									.css('color', '#ffffff')
+									.css('color', 'var(--white)')
 							)
 					)
 
@@ -717,14 +717,14 @@ const UserView = ({ user }) => {
 	view.showEvents = () => {
 
 		$(eventsTabButton)
-			.css('background-color', '#ffa31a')
-			.css('color', 'rgb(0, 0, 0.9)')
+			.css('background-color', 'var(--primary)')
+			.css('color', 'var(--black)')
 		$(infoTabButton)
-			.css('background-color', '#1b1b1b')
-			.css('color', '#ffffff')
+			.css('background-color', 'var(--black)')
+			.css('color', 'var(--white)')
 		$(otherTabButton)
-			.css('background-color', '#1b1b1b')
-			.css('color', '#ffffff')
+			.css('background-color', 'var(--black)')
+			.css('color', 'var(--white)')
 
 		view.setContent(LoadingView())
 
@@ -754,14 +754,14 @@ const UserView = ({ user }) => {
 	view.showOther = () => {
 
 		$(otherTabButton)
-			.css('background-color', '#ffa31a')
-			.css('color', 'rgb(0, 0, 0.9)')
+			.css('background-color', 'var(--primary)')
+			.css('color', 'var(--black)')
 		$(infoTabButton)
-			.css('background-color', '#1b1b1b')
-			.css('color', '#ffffff')
+			.css('background-color', 'var(--black)')
+			.css('color', 'var(--white)')
 		$(eventsTabButton)
-			.css('background-color', '#1b1b1b')
-			.css('color', '#ffffff')
+			.css('background-color', 'var(--black)')
+			.css('color', 'var(--white)')
 
 		view.setContent(
 			$(create('div'))
@@ -771,7 +771,7 @@ const UserView = ({ user }) => {
 				.append(
 					$(create('h3'))
 						.text('Placehoder...')
-						.css('color', '#ffffff')
+						.css('color', 'var(--white)')
 				)
 		)
 	}
@@ -806,7 +806,7 @@ const UserView = ({ user }) => {
 						// User
 						$(create('h2'))
 							.text(user.username)
-							.css('color', '#f90')
+							.css('color', 'var(--primary)')
 							.css('padding-left', '20px')
 							.css('display', 'inline-block')
 					)
@@ -970,7 +970,7 @@ const ProjectView = ({ project_id, onRecordClick, onRemoveProject, onProjectLoad
 									.append(
 										$(create('p'))
 											.text('Insert new record:')
-											.css('color', '#ffffff')
+											.css('color', 'var(--white)')
 									)
 									.append(
 										recordInput
@@ -1066,16 +1066,16 @@ const ProjectView = ({ project_id, onRecordClick, onRemoveProject, onProjectLoad
 						.attr('type', 'text')
 						.attr('value', '')
 						.attr('placeholder', 'Insert tag name...')
-						.css('color', ' #ffffff')
-						.css('background-color', '#1b1b1b')
-						.css('border', '1px solid #ffffff')
+						.css('color', ' var(--white)')
+						.css('background-color', 'var(--black)')
+						.css('border', '1px solid var(--white)')
 
 					const modal = ModalView({
 						content: $(create('div'))
 							.append(
 								$(create('p'))
 									.text('Insert new tag name:')
-									.css('color', '#ffffff')
+									.css('color', 'var(--white)')
 							)
 							.append(taginput),
 						onConfirm: () => {
@@ -1121,7 +1121,7 @@ const ProjectView = ({ project_id, onRecordClick, onRemoveProject, onProjectLoad
 							$(create('h3'))
 								.text(tag.name)
 								.css('display', 'inline')
-								.css('color', '#ffffff')
+								.css('color', 'var(--white)')
 						)
 						.append(
 							$(create('button'))
@@ -1178,16 +1178,16 @@ const ProjectView = ({ project_id, onRecordClick, onRemoveProject, onProjectLoad
 						.attr('name', 'new-tag-value')
 						.attr('value', '')
 						.attr('placeholder', 'Insert tag value')
-						.css('color', ' #ffffff')
-						.css('background-color', '#1b1b1b')
-						.css('border', '1px solid #ffffff')
+						.css('color', ' var(--white)')
+						.css('background-color', 'var(--black)')
+						.css('border', '1px solid var(--white)')
 
 					const modalVal = ModalView({
 						content: $(create('div'))
 							.append(
 								$(create('h4'))
 									.text('Add tag value: ')
-									.css('color', '#ffffff')
+									.css('color', 'var(--white)')
 							)
 							.append(input),
 						onConfirm: () => {
@@ -1243,13 +1243,13 @@ const ProjectView = ({ project_id, onRecordClick, onRemoveProject, onProjectLoad
 							.append(
 								$(create('h4'))
 									.text('Title: ')
-									.css('color', '#ffffff')
+									.css('color', 'var(--white)')
 							)
 							.append(
 								$(create('h4'))
 									.text(projectStatus.title)
 									.css('padding-left', '4px')
-									.css('color', '#ffffff')
+									.css('color', 'var(--white)')
 							)
 					)
 					.append(
@@ -1258,13 +1258,13 @@ const ProjectView = ({ project_id, onRecordClick, onRemoveProject, onProjectLoad
 							.append(
 								$(create('h4'))
 									.text('Number of Records: ')
-									.css('color', '#ffffff')
+									.css('color', 'var(--white)')
 							)
 							.append(
 								$(create('h4'))
 									.text(projectStatus.records)
 									.css('padding-left', '4px')
-									.css('color', '#ffffff')
+									.css('color', 'var(--white)')
 							)
 					)
 				if (noTags != 0) {
@@ -1274,36 +1274,35 @@ const ProjectView = ({ project_id, onRecordClick, onRemoveProject, onProjectLoad
 								.attr('class', "status-list")
 								.append(
 									$(icon('warning'))
-										.css('color', 'yellow')
+										.css('color', 'var(--yellow)')
 										.css('margin', '0px 8px')
 								)
 								.append(
 									$(create('h4'))
 										.text('Number of records without any tag: ')
-										.css('color', '#ffffff')
+										.css('color', 'var(--white)')
 								)
 								.append(
 									$(create('h4'))
 										.text(noTags)
 										.css('padding-left', '4px')
-										.css('color', '#ffffff')
+										.css('color', 'var(--white)')
 								)
 						)
-				}
-				else if (projectStatus.records != 0) {
+				} else if (projectStatus.records != 0) {
 					$(statusList)
 						.append(
 							$(create('div'))
 								.attr('class', "status-list")
 								.append(
 									$(icon('check'))
-										.css('color', 'green')
+										.css('color', 'var(--green)')
 										.css('margin', '0px 8px')
 								)
 								.append(
 									$(create('h4'))
 										.text('Every record has at least one tag')
-										.css('color', '#ffffff')
+										.css('color', 'var(--white)')
 								)
 						)
 
@@ -1317,24 +1316,24 @@ const ProjectView = ({ project_id, onRecordClick, onRemoveProject, onProjectLoad
 									.attr('class', "status-list")
 									.append(
 										$(icon('warning'))
-											.css('color', 'yellow')
+											.css('color', 'var(--yellow)')
 											.css('margin', '0px 8px')
 									)
 									.append(
 										$(create('h4'))
 											.text('The tag ')
-											.css('color', '#ffffff')
+											.css('color', 'var(--white)')
 											.append(
 												$(create('span'))
 													.text(tag)
-													.css('color', '#f90')
+													.css('color', 'var(--primary)')
 											)
 											.append(' has insufficient number of records associated: ')
 									)
 									.append(
 										$(create('h4'))
 											.text(projectStatus.tags[tag].count)
-											.css('color', '#ffffff')
+											.css('color', 'var(--white)')
 											.css('padding-left', '4px')
 									)
 							)
@@ -1348,24 +1347,24 @@ const ProjectView = ({ project_id, onRecordClick, onRemoveProject, onProjectLoad
 										.attr('class', "status-list")
 										.append(
 											$(icon('warning'))
-												.css('color', 'yellow')
+												.css('color', 'var(--yellow)')
 												.css('margin', '0px 8px')
 										)
 										.append(
 											$(create('h4'))
 												.text('The tag value ')
-												.css('color', '#ffffff')
+												.css('color', 'var(--white)')
 												.append(
 													$(create('span'))
 														.text(value)
-														.css('color', '#f90')
+														.css('color', 'var(--primary)')
 												)
 												.append(' has insufficient number of records associated: ')
 										)
 										.append(
 											$(create('h4'))
 												.text(projectStatus.tags[tag].values[value])
-												.css('color', '#ffffff')
+												.css('color', 'var(--white)')
 												.css('padding-left', '4px')
 										)
 								)
@@ -1451,7 +1450,7 @@ const ProjectView = ({ project_id, onRecordClick, onRemoveProject, onProjectLoad
 						// Title
 						$(create('h2'))
 							.text(state.project.title)
-							.css('color', '#f90')
+							.css('color', 'var(--primary)')
 							.css('padding-left', '20px')
 							.css('display', 'inline-block')
 					)
@@ -1469,7 +1468,7 @@ const ProjectView = ({ project_id, onRecordClick, onRemoveProject, onProjectLoad
 								const modal = ModalView({
 									content: $(create('h4'))
 										.text('Are you sure you want to delete this project?')
-										.css('color', '#f90'),
+										.css('color', 'var(--primary)'),
 									onConfirm: () => {
 										modal.disable()
 										api.removeProject({
@@ -1508,64 +1507,64 @@ const ProjectView = ({ project_id, onRecordClick, onRemoveProject, onProjectLoad
 
 		if (state.tabSelected === 'Records') {
 			$(recordsTabButton)
-				.css('background-color', '#ffa31a')
-				.css('color', 'rgb(0, 0, 0.9)')
+				.css('background-color', 'var(--primary)')
+				.css('color', 'var(--black)')
 			$(tagsTabButton)
-				.css('background-color', '#1b1b1b')
-				.css('color', '#ffffff')
+				.css('background-color', 'var(--black)')
+				.css('color', 'var(--white)')
 			$(eventsTabButton)
-				.css('background-color', '#1b1b1b')
-				.css('color', '#ffffff')
+				.css('background-color', 'var(--black)')
+				.css('color', 'var(--white)')
 			$(statusTabButton)
-				.css('background-color', '#1b1b1b')
-				.css('color', '#ffffff')
+				.css('background-color', 'var(--black)')
+				.css('color', 'var(--white)')
 
 
 			view.showRecords()
 		} else if (state.tabSelected === 'Tags') {
 			$(recordsTabButton)
-				.css('background-color', '#1b1b1b')
-				.css('color', '#ffffff')
+				.css('background-color', 'var(--black)')
+				.css('color', 'var(--white)')
 			$(tagsTabButton)
-				.css('background-color', '#ffa31a')
-				.css('color', 'rgb(0, 0, 0.9)')
+				.css('background-color', 'var(--primary)')
+				.css('color', 'var(--black)')
 			$(eventsTabButton)
-				.css('background-color', '#1b1b1b')
-				.css('color', '#ffffff')
+				.css('background-color', 'var(--black)')
+				.css('color', 'var(--white)')
 			$(statusTabButton)
-				.css('background-color', '#1b1b1b')
-				.css('color', '#ffffff')
+				.css('background-color', 'var(--black)')
+				.css('color', 'var(--white)')
 
 			view.showTags()
 		} else if (state.tabSelected === 'Events') {
 			$(eventsTabButton)
-				.css('background-color', '#ffa31a')
-				.css('color', 'rgb(0, 0, 0.9)')
+				.css('background-color', 'var(--primary)')
+				.css('color', 'var(--black)')
 			$(tagsTabButton)
-				.css('background-color', '#1b1b1b')
-				.css('color', '#ffffff')
+				.css('background-color', 'var(--black)')
+				.css('color', 'var(--white)')
 			$(recordsTabButton)
-				.css('background-color', '#1b1b1b')
-				.css('color', '#ffffff')
+				.css('background-color', 'var(--black)')
+				.css('color', 'var(--white)')
 			$(statusTabButton)
-				.css('background-color', '#1b1b1b')
-				.css('color', '#ffffff')
+				.css('background-color', 'var(--black)')
+				.css('color', 'var(--white)')
 
 			view.showEvents()
 		} else if (state.tabSelected === 'Status') {
 			$(eventsTabButton)
-				.css('background-color', '#1b1b1b')
-				.css('color', '#ffffff')
+				.css('background-color', 'var(--black)')
+				.css('color', 'var(--white)')
 
 			$(tagsTabButton)
-				.css('background-color', '#1b1b1b')
-				.css('color', '#ffffff')
+				.css('background-color', 'var(--black)')
+				.css('color', 'var(--white)')
 			$(recordsTabButton)
-				.css('background-color', '#1b1b1b')
-				.css('color', '#ffffff')
+				.css('background-color', 'var(--black)')
+				.css('color', 'var(--white)')
 			$(statusTabButton)
-				.css('background-color', '#ffa31a')
-				.css('color', 'rgb(0, 0, 0.9)')
+				.css('background-color', 'var(--primary)')
+				.css('color', 'var(--black)')
 
 			view.showStatus()
 		}
@@ -1611,7 +1610,7 @@ const RecordView = ({ record, project, onRemoveRecord, onRecordUpdate }) => {
 								$(create('option'))
 									.attr('value', projectTag.name)
 									.text(projectTag.name)
-									.css('color', 'rgb(0, 0, 0.9)')
+									.css('color', 'var(--black)')
 							)
 					}
 
@@ -1632,7 +1631,7 @@ const RecordView = ({ record, project, onRemoveRecord, onRecordUpdate }) => {
 										$(create('option'))
 											.attr('value', value)
 											.text(value)
-											.css('color', 'rgb(0, 0, 0.9)')
+											.css('color', 'var(--black)')
 									)
 								}
 								break
@@ -1647,7 +1646,7 @@ const RecordView = ({ record, project, onRemoveRecord, onRecordUpdate }) => {
 							.append(
 								$(create('h4'))
 									.text('Insert tag name and value:')
-									.css('color', '#ffffff')
+									.css('color', 'var(--white)')
 							)
 							.append(tagNameselect)
 							.append(tagValueSelect)
@@ -1731,7 +1730,7 @@ const RecordView = ({ record, project, onRemoveRecord, onRecordUpdate }) => {
 								$(create('h3'))
 									.text(tag.name + ': ')
 									.css('min-width', '128px')
-									.css('color', '#ffffff')
+									.css('color', 'var(--white)')
 							)
 					)
 					.append(select)
@@ -1825,7 +1824,7 @@ const RecordView = ({ record, project, onRemoveRecord, onRecordUpdate }) => {
 					.attr('id', 'record-view-input')
 					.text(record.input)
 					.css('padding-left', '20px')
-					.css('color', '#f90')
+					.css('color', 'var(--primary)')
 					.css('display', 'inline-block')
 			)
 			.append(
@@ -1894,7 +1893,7 @@ const RecordView = ({ record, project, onRemoveRecord, onRecordUpdate }) => {
 								.append(
 									$(create('h4'))
 										.text('Modify input:')
-										.css('color', '#ffffff')
+										.css('color', 'var(--white)')
 								)
 								.append(recordInput),
 							onConfirm: () => {
@@ -1938,7 +1937,7 @@ const RecordView = ({ record, project, onRemoveRecord, onRecordUpdate }) => {
 						const modal = ModalView({
 							content: $(create('h4'))
 								.text('Are you sure you want to delete this record?')
-								.css('color', '#f90'),
+								.css('color', 'var(--primary)'),
 							onConfirm: () => {
 								modal.disable()
 								api.removeRecord({
@@ -1981,20 +1980,20 @@ const RecordView = ({ record, project, onRemoveRecord, onRecordUpdate }) => {
 
 		if (state.tabSelected === 'Events') {
 			$(eventsTabButton)
-				.css('background-color', '#ffa31a')
-				.css('color', 'rgb(0, 0, 0.9)')
+				.css('background-color', 'var(--primary)')
+				.css('color', 'var(--black)')
 			$(tagsTabButton)
-				.css('background-color', '#1b1b1b')
-				.css('color', '#ffffff')
+				.css('background-color', 'var(--black)')
+				.css('color', 'var(--white)')
 
 			view.showEvents()
 		} else {
 			$(tagsTabButton)
-				.css('background-color', '#ffa31a')
-				.css('color', 'rgb(0, 0, 0.9)')
+				.css('background-color', 'var(--primary)')
+				.css('color', 'var(--black)')
 			$(eventsTabButton)
-				.css('background-color', '#1b1b1b')
-				.css('color', '#ffffff')
+				.css('background-color', 'var(--black)')
+				.css('color', 'var(--white)')
 
 			view.showTags()
 		}
