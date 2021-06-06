@@ -8,9 +8,6 @@ const icon = (name) => {
 	return $(create('i')).attr('class', 'eos-icons').text(name)
 }
 
-/**
- * JS object containing UI helper methods.
- */
 const ui = {}
 
 ui.setContent = (view) => {

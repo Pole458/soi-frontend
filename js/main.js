@@ -50,6 +50,9 @@ function deleteCookie(name) {
 
 function init() {
 
+  // Fakes a loading duration for a smoother experience
+  const loadingDuration = 1000
+
   // Retrieve auth token stored in cookie
   token = getCookieJSON("token");
 
@@ -57,19 +60,30 @@ function init() {
     
     // If a token is found, try to login with it
 
+    const startingTime = new Date().getTime();
+
     api.loginWithToken({
       onSuccess: () => {
         token = getCookieJSON("token");
-        ui.setContent(MainPage())
+        setTimeout(
+          () => ui.setContent(MainPage()),
+          loadingDuration - new Date().getTime() + startingTime
+        )
       },
       onError: () => {
-        ui.setContent(LoginPage())
+        setTimeout(
+          () => ui.setContent(LoginPage()),
+          loadingDuration - new Date().getTime() + startingTime
+        )
       }
     });
   
   } else {
     // If no token is found, show login page
-    ui.setContent(LoginPage());
+    setTimeout(
+      () => ui.setContent(LoginPage()),
+      loadingDuration
+    )
   }
 };
 
