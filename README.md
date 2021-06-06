@@ -2,7 +2,7 @@
 
 ## Front End
 
-Open a terminal and type the following instructions:
+Open a terminal and type the following commands:
 
 `cd /var/www`
 
@@ -18,7 +18,7 @@ Now you can try visiting the page www.datahub to see if everything is working.
 
 ## Back End
 
-Open a terminal and type the following instructions:
+Open a terminal and type the following commands:
 
 `cd some/directory`
 

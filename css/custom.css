@@ -330,7 +330,7 @@ h1,h2,h3,h4,h5,label,input,button,select,option,p,textarea {
 }
 
 .tags-list {
-  flex-direction: row;
+  flex-wrap: wrap;
   align-items: center;
   min-height: 64px;
   margin: 8px;
@@ -363,13 +363,13 @@ h1,h2,h3,h4,h5,label,input,button,select,option,p,textarea {
   cursor: pointer;
 }
 
-.remove-tags-project{
+.remove-tags-project {
   position: absolute;
   display: inline;
   right: 16px;
   border: 0;
-  background-color: var(--primary);
-  color: var(--black);
+  background-color: var(--gray);
+  color: var(--white);
   border-radius: 4px;
 }
 
@@ -384,8 +384,8 @@ h1,h2,h3,h4,h5,label,input,button,select,option,p,textarea {
   margin-right: 8px;
   padding: 4px 8px;
   border: 1px solid var(--black);
-  background-color: var(--primary);
-  color: var(--black)
+  background-color: var(--gray);
+  color: var(--white)
 }
 
 .project-tags-val:hover{
@@ -412,8 +412,8 @@ h1,h2,h3,h4,h5,label,input,button,select,option,p,textarea {
   border-radius: 80px;
   padding: 4px;
   border: 1px solid var(--black);
-  background-color: var(--primary);
-  color: var(--black);
+  background-color: var(--gray);
+  color: var(--white);
 }
 
 .records-tags-val:hover {

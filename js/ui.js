@@ -1140,6 +1140,7 @@ const ProjectView = ({ project_id, onRecordClick, onRemoveProject, onProjectLoad
 			const valuesList = create('div')
 			$(valuesList)
 				.css('display', 'flex')
+				.css('flex-wrap', 'wrap')
 
 			if (tag.values) {
 				tag.values.forEach(value => {
